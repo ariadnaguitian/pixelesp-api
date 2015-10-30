@@ -1,0 +1,10 @@
+<ion-view view-title="Usuarios">
+  <ion-content>
+    <ion-list>
+      <ion-item ng-repeat="usuario in usuarios" href="#/app/usuarios/{{usuario.id}}">
+        {{usuario.Nombre}}
+      </ion-item>
+    </ion-list>
+    <p>{{user.Nombre}}</p>
+  </ion-content>
+</ion-view>
