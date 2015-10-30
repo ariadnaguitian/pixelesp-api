@@ -3,7 +3,7 @@ ini_set('display_errors',1);
 ini_set('display_startup_errors',1);
 error_reporting(-1);
 
-
+mysql://bbe7913f482805:05885e55@/
 
 require 'vendor/autoload.php';
 require 'Models/User.php';
@@ -11,10 +11,10 @@ $app = new \Slim\Slim();
 $app->config('databases', [
     'default' => [
         'driver'    => 'mysql',
-        'host'      => 'localhost',
-        'database'  => 'pixelesp',
-        'username'  => 'root',
-        'password'  => '',
+        'host'      => 'us-cdbr-iron-east-03.cleardb.net',
+        'database'  => 'heroku_3953fb4ef720f6e',
+        'username'  => 'bbe7913f482805',
+        'password'  => '05885e55',
         'charset'   => 'utf8',
         'collation' => 'utf8_general_ci',
         'prefix'    => ''
