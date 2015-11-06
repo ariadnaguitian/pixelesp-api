@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
+    <title></title>
+
+    <link href="lib/ionic/css/ionic.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+    <!-- <script src="http://cdn.cssobfuscator.com/style/iq2xjn7duj9ujpgbahl2j449q08gjsj8"></script> -->
+
+
+    <!-- IF using Sass (run gulp sass first), then uncomment below and remove the CSS includes above
+    <link href="css/ionic.app.css" rel="stylesheet">
+    -->
+
+    <!-- ionic/angularjs js -->
+    <script src="lib/ionic/js/ionic.bundle.js"></script>
+
+    <!-- cordova script (this will be a 404 during development) -->
+    <script src="cordova.js"></script>
+
+    <!-- your app's js -->
+    <script src="js/app.js"></script>
+    <script src="js/controllers.js"></script>
+  </head>
+
+  <!-- All views are loaded into the <ion-nav-view> element below -->
+  <body ng-app="starter" class="platform-android platform-cordova platform-webview">
+
+  
+
+
+    <ion-tabs class="tabs-background-dark  tabs-color-energized tabs-icon-top">
+
+  <ion-tab title="Inicio" icon-on="icon ion-home" icon-off="icon ion-home"  href="/app/inicio">
+   <ion-nav-view name="tab-inicio"></ion-nav-view>
+   
+
+  </ion-tab>
+
+  <ion-tab title="Galeria" icon-on="icon ion-images" icon-off="icon ion-images"  href="/app/galeria">
+  <ion-nav-view name="tab-galeria"></ion-nav-view>
+  
+
+  </ion-tab>
+
+   </ion-tab>
+  <ion-tab title="Foro" icon-on="icon ion-chatboxes" icon-off="icon ion-chatboxes"  href="/app/foro">
+  <ion-nav-view name="tab-foro"></ion-nav-view>
+    
+
+  </ion-tab>
+
+  <ion-tab title="Comunidad" icon-on="icon ion-android-contacts" icon-off="icon ion-android-contacts" href="/app/comunidad">
+          <ion-nav-view name="tab-comunidad"></ion-nav-view>
+    
+
+  </ion-tab>
+
+</ion-tabs>
+  
+  
+
+    <ion-nav-view>
+
+
+    </ion-nav-view>
+  </body>
+</html>
