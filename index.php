@@ -6,8 +6,17 @@ error_reporting(-1);
 
 require 'vendor/autoload.php';
 require 'Models/User.php';
+require 'Models/image.php';
 
-session_start();
+function simple_encrypt($text,$salt){  
+   return trim(base64_encode(mcrypt_encrypt(MCRYPT_RIJNDAEL_256, $salt, $text, MCRYPT_MODE_ECB, mcrypt_create_iv(mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB), MCRYPT_RAND))));
+}
+ 
+function simple_decrypt($text,$salt){  
+    return trim(mcrypt_decrypt(MCRYPT_RIJNDAEL_256, $salt, base64_decode($text), MCRYPT_MODE_ECB, mcrypt_create_iv(mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB), MCRYPT_RAND)));
+}
+
+
 
 $app = new \Slim\Slim();
 $app->config('databases', [
@@ -35,6 +44,8 @@ $app->options('/(:name+)', function() use ($app) {
 $app->get('/', function () use ($app) {
 	$app->render(200,array('msg' => 'pixelesp'));
 });
+
+
 
 $app->post('/login', function () use ($app) {
 	$input = $app->request->getBody();
@@ -71,32 +82,37 @@ $app->post('/login', function () use ($app) {
         ));
 	}
 
-	$_SESSION["user"] = $user->id;
-
-	$app->render(200,array());
+	$token = simple_encrypt($user->id, $app->enc_key);
+	$app->render(200,array('token' => $token));
 });
 
 $app->get('/me', function () use ($app) {
 
-	if(empty($_SESSION["user"])){
+	
+	$token = $app->request->headers->get('auth-token');
+	if(empty($token)){
 		$app->render(500,array(
 			'error' => TRUE,
-            'msg'   => 'Not logged',
+            'msg'   => 'Not logged1',
         ));
 	}
-	$user = User::find($_SESSION["user"]);
+	
+	$id_user_token = simple_decrypt($token, $app->enc_key);
+	$user = User::find($id_user_token);
 	if(empty($user)){
 		$app->render(500,array(
 			'error' => TRUE,
-            'msg'   => 'Not logged',
+            'msg'   => 'Not logged2',
         ));
 	}
 	$app->render(200,array('data' => $user->toArray()));
 });
 
+//Logout:
 
-
-
+$app->get('/logout', function() use($app) {
+    session_destroy();
+});
 
 
 
@@ -142,6 +158,8 @@ $app->post('/usuarios', function () use ($app) {
     $user->save();
     $app->render(200,array('data' => $user->toArray()));
 });
+
+
 $app->put('/usuarios/:id', function ($id) use ($app) {
 	$input = $app->request->getBody();
 	
@@ -200,5 +218,13 @@ $app->delete('/usuarios/:id', function ($id) use ($app) {
 	$user->delete();
 	$app->render(200);
 });
+
+
+$app->get('/imagenes', function () use ($app) {
+	$db = $app->db->getConnection();
+	$images = $db->table('imagenes')->select('IdImagen', 'IdUsuario', 'Titulo', 'Previa', 'Imagen', 'Descripcion', 'Fecha', 'Animacion', 'Isometrico', 'Tags', 'Colores', 'Avatar', 'Concurso')->get();
+	$app->render(200,array('data' => $images));
+});
+
 $app->run();
 ?>
