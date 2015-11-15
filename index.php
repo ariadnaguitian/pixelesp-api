@@ -222,7 +222,7 @@ $app->delete('/usuarios/:id', function ($id) use ($app) {
 
 $app->get('/imagenes', function () use ($app) {
 	$db = $app->db->getConnection();
-	$images = $db->table('imagenes')->select('IdImagen', 'IdUsuario', 'Titulo', 'Previa', 'Imagen', 'Descripcion', 'Fecha', 'Animacion', 'Isometrico', 'Tags', 'Colores', 'Avatar', 'Concurso')->get();
+	$images = $db->table('imagenes')->select('IdImagen', 'IdUsuario')->get();
 	$app->render(200,array('data' => $images));
 });
 
