@@ -227,8 +227,8 @@ $app->get('/imagenes', function () use ($app) {
 });
 
 
-$app->get('/imagenes/:IdImagen', function ($id) use ($app) {
-	$image=Image::find($id);
+$app->get('/imagenes/:IdImagen', function ($IdImagen) use ($app) {
+	$image=Image::find($IdImagen);
 	if(empty($image)){
 		$app->render(404,array(
 			'error' => TRUE,
