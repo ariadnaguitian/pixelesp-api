@@ -226,5 +226,20 @@ $app->get('/imagenes', function () use ($app) {
 	$app->render(200,array('data' => $images));
 });
 
+
+$app->get('/imagenes/:IdImagen', function ($id) use ($app) {
+	$image=Image::find($id);
+	if(empty($image)){
+		$app->render(404,array(
+			'error' => TRUE,
+            'msg'   => 'Anuncio not found',
+        ));
+	}
+	$app->render(200,array('data' => $image->toArray()));
+});
+
+
+
+
 $app->run();
 ?>
