@@ -222,13 +222,13 @@ $app->delete('/usuarios/:id', function ($id) use ($app) {
 
 $app->get('/imagenes', function () use ($app) {
 	$db = $app->db->getConnection();
-	$images = $db->table('imagenes')->select('IdImagen', 'IdUsuario')->get();
+	$images = $db->table('imagenes')->select('Id', 'IdUsuario')->get();
 	$app->render(200,array('data' => $images));
 });
 
 
-$app->get('/imagenes/:IdImagen', function ($IdImagen) use ($app) {
-	$image=Image::find($IdImagen);
+$app->get('/imagenes/:Id', function ($Id) use ($app) {
+	$image=Image::find($Id);
 	if(empty($image)){
 		$app->render(404,array(
 			'error' => TRUE,
