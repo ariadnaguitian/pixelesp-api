@@ -86,6 +86,11 @@ $app->post('/login', function () use ($app) {
 	$app->render(200,array('token' => $token));
 });
 
+$app->get('/logout', function() use($app) {
+ 	$token="";
+});
+
+
 $app->get('/me', function () use ($app) {
 
 	
@@ -108,11 +113,7 @@ $app->get('/me', function () use ($app) {
 	$app->render(200,array('data' => $user->toArray()));
 });
 
-//Logout:
 
-$app->get('/logout', function() use($app) {
-    session_destroy();
-});
 
 
 
