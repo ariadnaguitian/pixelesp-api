@@ -91,9 +91,7 @@ $app->get('/logout', function() use($app) {
 });
 
 
-$app->get('/me', function () use ($app) {
-
-	
+$app->get('/me', function () use ($app) {	
 $token = $app->request->headers->get('auth-token');
 if(empty($token)){
 		$app->render(500,array(
