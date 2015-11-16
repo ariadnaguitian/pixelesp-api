@@ -16,7 +16,7 @@ function simple_decrypt($text,$salt){
     return trim(mcrypt_decrypt(MCRYPT_RIJNDAEL_256, $salt, base64_decode($text), MCRYPT_MODE_ECB, mcrypt_create_iv(mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB), MCRYPT_RAND)));
 }
 
-$enc_key = '1234567891234567';
+
 
 $app = new \Slim\Slim();
 $app->config('databases', [
@@ -31,6 +31,8 @@ $app->config('databases', [
         'prefix'    => ''
     ]
     ]);
+
+$app->enc_key = '1234567891234567';
 
 $app->add(new Zeuxisoo\Laravel\Database\Eloquent\ModelMiddleware);
 $app->view(new \JsonApiView());
