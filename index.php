@@ -7,6 +7,7 @@ error_reporting(-1);
 require 'vendor/autoload.php';
 require 'Models/User.php';
 require 'Models/image.php';
+require 'Models/Noticia.php';
 
 function simple_encrypt($text,$salt){  
    return trim(base64_encode(mcrypt_encrypt(MCRYPT_RIJNDAEL_256, $salt, $text, MCRYPT_MODE_ECB, mcrypt_create_iv(mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB), MCRYPT_RAND))));
@@ -243,6 +244,23 @@ $app->get('/imagenes/:Id', function ($Id) use ($app) {
 	$app->render(200,array('data' => $image->toArray()));
 });
 
+$app->get('/noticias', function () use ($app) {
+	$db = $app->db->getConnection();
+	$images = $db->table('noticias')->select()->get();
+	$app->render(200,array('data' => $images));
+});
+
+
+$app->get('/noticias/:id', function ($Id) use ($app) {
+	$image=Noticia::find($Id);
+	if(empty($image)){
+		$app->render(404,array(
+			'error' => TRUE,
+            'msg'   => 'Anuncio not found',
+        ));
+	}
+	$app->render(200,array('data' => $image->toArray()));
+});
 
 
 
