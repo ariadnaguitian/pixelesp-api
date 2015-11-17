@@ -19,6 +19,8 @@ function simple_decrypt($text,$salt){
 
 
 $app = new \Slim\Slim();
+
+$app->enc_key ='1234567891234567';
 $app->config('databases', [
     'default' => [
         'driver'    => 'mysql',
@@ -32,7 +34,7 @@ $app->config('databases', [
     ]
     ]);
 
-$app->enc_key = '1234567891234567';
+
 
 $app->add(new Zeuxisoo\Laravel\Database\Eloquent\ModelMiddleware);
 $app->view(new \JsonApiView());
