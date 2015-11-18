@@ -238,7 +238,7 @@ $app->get('/imagenes/:Id', function ($Id) use ($app) {
 	if(empty($image)){
 		$app->render(404,array(
 			'error' => TRUE,
-            'msg'   => 'Anuncio not found',
+            'msg'   => 'Imagen not found',
         ));
 	}
 	$app->render(200,array('data' => $image->toArray()));
@@ -246,21 +246,91 @@ $app->get('/imagenes/:Id', function ($Id) use ($app) {
 
 $app->get('/noticias', function () use ($app) {
 	$db = $app->db->getConnection();
-	$images = $db->table('noticias')->select()->get();
+	$images = $db->table('noticias')->select('id', 'Titulo')->get();
 	$app->render(200,array('data' => $images));
 });
 
+$app->post('/noticias', function () use ($app) {
+	$input = $app->request->getBody();
 
-$app->get('/noticias/:id', function ($Id) use ($app) {
-	$image=Noticia::find($Id);
-	if(empty($image)){
-		$app->render(404,array(
+	$Titulo = $input['Titulo'];
+
+ 	if(empty($Titulo)){
+		$app->render(500,array(
 			'error' => TRUE,
-            'msg'   => 'Anuncio not found',
+            'msg'   => 'Titulo is required',
         ));
 	}
-	$app->render(200,array('data' => $image->toArray()));
+	$Descripcion = $input['Descripcion'];
+	if(empty($Descripcion)){
+		$app->render(500,array(
+			'error' => TRUE,
+            'msg'   => 'Descripcion is required',
+        ));
+	}
+		
+    $noticia = new Noticia();
+    $noticia->Titulo = $Titulo;
+    $noticia->Descripcion = $Descripcion;
+ 
+     
+    $noticia->save();
+    $app->render(200,array('data' => $noticia->toArray()));
 });
+
+
+$app->put('/noticias/:id', function ($id) use ($app) {
+	$input = $app->request->getBody();
+	
+	$Titulo = $input['Titulo'];
+	if(empty($Titulo)){
+		$app->render(500,array(
+			'error' => TRUE,
+            'msg'   => 'Titulo is required',
+        ));
+	}
+	$Descripcion = $input['Descripcion'];
+	if(empty($Descripcion)){
+		$app->render(500,array(
+			'error' => TRUE,
+            'msg'   => 'Descripcion is required',
+        ));
+	}
+
+	$noticia = Noticia::find($id);
+	if(empty($noticia)){
+		$app->render(404,array(
+			'error' => TRUE,
+            'msg'   => 'noticia not found',
+        ));
+	}
+    $noticia->Titulo = $Titulo;
+    $noticia->Descripcion = $Descripcion;
+    $noticia->save();
+    $app->render(200,array('data' => $noticia->toArray()));
+});
+$app->get('/noticias/:id', function ($id) use ($app) {
+	$noticia = Noticia::find($id);
+	if(empty($noticia)){
+		$app->render(404,array(
+			'error' => TRUE,
+            'msg'   => 'noticia not found',
+        ));
+	}
+	$app->render(200,array('data' => $noticia->toArray()));
+});
+$app->delete('/noticias/:id', function ($id) use ($app) {
+	$noticia = Noticia::find($id);
+	if(empty($noticia)){
+		$app->render(404,array(
+			'error' => TRUE,
+            'msg'   => 'noticia not found',
+        ));
+	}
+	$noticia->delete();
+	$app->render(200);
+});
+
 
 
 
