@@ -80,7 +80,7 @@ $app->post('/login', function () use ($app) {
         ));
 	}
 
-	if($user->password != $password){
+	if($user['password'] != $password){
 		$app->render(500,array(
 			'error' => TRUE,
             'msg'   => 'password dont match',
