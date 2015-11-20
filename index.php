@@ -188,6 +188,24 @@ $email = $input['email'];
             'msg'   => 'email is required',
         ));
 	}
+	$city = $input['city'];
+	if(empty($city)){
+		$app->render(500,array(
+			'error' => TRUE,
+            'msg'   => 'city is required',
+        ));
+	}
+
+$country = $input['country'];
+	if(empty($country)){
+		$app->render(500,array(
+			'error' => TRUE,
+            'msg'   => 'country is required',
+        ));
+	}
+
+
+
 	$user = User::find($id);
 	if(empty($user)){
 		$app->render(404,array(
