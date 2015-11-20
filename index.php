@@ -198,6 +198,9 @@ $email = $input['email'];
     $user->name = $name;
     $user->password = $password;
     $user->email = $email;
+    $user->city = $city;
+    $user->country = $country;
+
     $user->save();
     $app->render(200,array('data' => $user->toArray()));
 });
