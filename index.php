@@ -71,7 +71,7 @@ $app->post('/login', function () use ($app) {
 	}
 
 	$db = $app->db->getConnection();
-$user = (object) $db->table('usuarios')->select()->where('email', $email)->first();
+$user =$db->table('usuarios')->select()->where('email', $email)->first();
     if(empty($user)){
         $app->render(500,array(
             'error' => TRUE,
@@ -79,7 +79,7 @@ $user = (object) $db->table('usuarios')->select()->where('email', $email)->first
         ));
     }
 
-    if($user->password != $password){
+    if($user['password'] != $password){
         $app->render(500,array(
             'error' => TRUE,
             'msg'   => 'password dont match',
