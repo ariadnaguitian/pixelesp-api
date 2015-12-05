@@ -265,7 +265,7 @@ $app->get('/imagenes/:Id', function ($Id) use ($app) {
 
 $app->get('/noticias', function () use ($app) {
 	$db = $app->db->getConnection();
-	$images = $db->table('noticias')->select('id', 'Titulo','Descripcion','created_at')->order by('Titulo')->get();
+	$images = $db->table('noticias')->select('id', 'Titulo','Descripcion','created_at')->orderby('Descripcion')->get();
 	$app->render(200,array('data' => $images));
 });
 
