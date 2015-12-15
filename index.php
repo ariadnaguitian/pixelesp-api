@@ -6,7 +6,7 @@ error_reporting(-1);
 
 require 'vendor/autoload.php';
 require 'Models/User.php';
-require 'Models/Image.php';
+require 'Models/Imagen.php';
 require 'Models/Noticia.php';
 require 'Models/Post.php';
 require 'Models/comment.php';
