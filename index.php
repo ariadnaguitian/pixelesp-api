@@ -254,24 +254,6 @@ $app->delete('/usuarios/:id', function ($id) use ($app) {
 });
 
 
-$app->get('/imagenes', function () use ($app) {
-	$db = $app->db->getConnection();
-	$images = $db->table('imagenes')->select('Id', 'IdUsuario')->get();
-	$app->render(200,array('data' => $images));
-});
-
-
-$app->get('/imagenes/:Id', function ($Id) use ($app) {
-	$image=Image::find($Id);
-	if(empty($image)){
-		$app->render(404,array(
-			'error' => TRUE,
-            'msg'   => 'Imagen not found',
-        ));
-	}
-	$app->render(200,array('data' => $image->toArray()));
-});
-
 $app->get('/noticias', function () use ($app) {
 	$db = $app->db->getConnection();
 	$images = $db->table('noticias')->select()->orderby('created_at','desc')->get();
@@ -358,6 +340,109 @@ $app->delete('/noticias/:id', function ($id) use ($app) {
 	$noticia->delete();
 	$app->render(200);
 });
+
+
+
+
+
+
+
+
+$app->get('/imagenes', function () use ($app) {
+	$db = $app->db->getConnection();
+	$images = $db->table('imagenes')->select()->orderby('created_at','desc')->get();
+	$app->render(200,array('data' => $images));
+});
+
+$app->post('/imagenes', function () use ($app) {
+	$input = $app->request->getBody();
+
+	$Titulo = $input['Titulo'];
+
+ 	if(empty($Titulo)){
+		$app->render(500,array(
+			'error' => TRUE,
+            'msg'   => 'Titulo is required',
+        ));
+	}
+	$Descripcion = $input['Descripcion'];
+	if(empty($Descripcion)){
+		$app->render(500,array(
+			'error' => TRUE,
+            'msg'   => 'Descripcion is required',
+        ));
+	}
+		
+    $imagen = new Image();
+    $imagen->Titulo = $Titulo;
+    $imagen->Descripcion = $Descripcion;
+ 
+     
+    $imagen->save();
+    $app->render(200,array('data' => $imagen->toArray()));
+});
+
+
+$app->put('/imagenes/:id', function ($id) use ($app) {
+	$input = $app->request->getBody();
+	
+	$Titulo = $input['Titulo'];
+	if(empty($Titulo)){
+		$app->render(500,array(
+			'error' => TRUE,
+            'msg'   => 'Titulo is required',
+        ));
+	}
+	$Descripcion = $input['Descripcion'];
+	if(empty($Descripcion)){
+		$app->render(500,array(
+			'error' => TRUE,
+            'msg'   => 'Descripcion is required',
+        ));
+	}
+
+	$imagen = Image::find($id);
+	if(empty($imagen)){
+		$app->render(404,array(
+			'error' => TRUE,
+            'msg'   => 'imagen not found',
+        ));
+	}
+    $imagen->Titulo = $Titulo;
+    $imagen->Descripcion = $Descripcion;
+    $imagen->save();
+    $app->render(200,array('data' => $imagen->toArray()));
+});
+$app->get('/imagenes/:id', function ($id) use ($app) {
+	$imagen = Image::find($id);
+	if(empty($imagen)){
+		$app->render(404,array(
+			'error' => TRUE,
+            'msg'   => 'imagen not found',
+        ));
+	}
+	$app->render(200,array('data' => $imagen->toArray()));
+});
+$app->delete('/imagenes/:id', function ($id) use ($app) {
+	$imagen = Image::find($id);
+	if(empty($imagen)){
+		$app->render(404,array(
+			'error' => TRUE,
+            'msg'   => 'imagen not found',
+        ));
+	}
+	$imagen->delete();
+	$app->render(200);
+});
+
+
+
+
+
+
+
+
+
 
 $app->get('/post/:id', function ($id) use ($app) {
 	$db = $app->db->getConnection();
