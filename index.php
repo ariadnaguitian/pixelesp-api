@@ -350,7 +350,7 @@ $app->delete('/noticias/:id', function ($id) use ($app) {
 
 $app->get('/imagenes', function () use ($app) {
 	$db = $app->db->getConnection();
-	$images = $db->table('imagenes')->select()->orderby('created_at','desc')->get();
+	$images = $db->table('imagenes')->select()->get();
 	$app->render(200,array('data' => $images));
 });
 
