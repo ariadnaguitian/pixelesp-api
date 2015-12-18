@@ -76,7 +76,7 @@ $app->post('/login', function () use ($app) {
 	}
 
 	$db = $app->db->getConnection();
-$user = (object) $db->table('usuarios')->select()->where('email', $email)->first();
+$user =$db->table('usuarios')->select()->where('email', $email)->first();
     if(empty($user)){
         $app->render(500,array(
             'error' => TRUE,
@@ -84,7 +84,7 @@ $user = (object) $db->table('usuarios')->select()->where('email', $email)->first
         ));
     }
 
-    if($user->password != $password){
+    if($user['password'] != $password){
         $app->render(500,array(
             'error' => TRUE,
             'msg'   => 'password dont match',
@@ -127,7 +127,7 @@ if(empty($token)){
 
 $app->get('/usuarios', function () use ($app) {
 	$db = $app->db->getConnection();
-	$usuarios = $db->table('usuarios')->select()->get();
+	$usuarios = $db->table('usuarios')->select('id', 'name', 'email', 'city','country')->get();
 	$app->render(200,array('data' => $usuarios));
 });
 
