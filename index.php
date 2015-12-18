@@ -127,7 +127,7 @@ if(empty($token)){
 
 $app->get('/usuarios', function () use ($app) {
 	$db = $app->db->getConnection();
-	$usuarios = $db->table('usuarios')->select('id', 'name', 'email', 'city','country')->get();
+	$usuarios = $db->table('usuarios')->select()->get();
 	$app->render(200,array('data' => $usuarios));
 });
 
@@ -228,6 +228,7 @@ $country = $input['country'];
     $app->render(200,array('data' => $user->toArray()));
 });
 $app->get('/usuarios/:id', function ($id) use ($app) {
+	$db = $app->db->getConnection();
 	$user = User::find($id);
 	if(empty($user)){
 		$app->render(404,array(
@@ -235,6 +236,11 @@ $app->get('/usuarios/:id', function ($id) use ($app) {
             'msg'   => 'user not found',
         ));
 	}
+	unset($user->password);
+	unset($user->email);
+
+	$user->posts = $db->table('posts')->select('title')->where('id_usuario', $user->id)->get();
+
 
 	$app->render(200,array('data' => $user->toArray()));
 });
