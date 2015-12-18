@@ -76,7 +76,7 @@ $app->post('/login', function () use ($app) {
 	}
 
 	$db = $app->db->getConnection();
-$user =$db->table('usuarios')->select()->where('email', $email)->first();
+$user = (object) $db->table('usuarios')->select()->where('email', $email)->first();
     if(empty($user)){
         $app->render(500,array(
             'error' => TRUE,
@@ -466,7 +466,7 @@ $app->post('/trabajos', function () use ($app) {
         ));
 	}
 		
-    $trabajo = new Trabajo();
+    $trabajo = new Image();
     $trabajo->Titulo = $Titulo;
     $trabajo->Descripcion = $Descripcion;
  
