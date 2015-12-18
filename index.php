@@ -466,7 +466,7 @@ $app->post('/trabajos', function () use ($app) {
         ));
 	}
 		
-    $trabajo = new Image();
+    $trabajo = new Trabajo();
     $trabajo->Titulo = $Titulo;
     $trabajo->Descripcion = $Descripcion;
  
@@ -494,7 +494,7 @@ $app->put('/trabajos/:id', function ($id) use ($app) {
         ));
 	}
 
-	$trabajo = Image::find($id);
+	$trabajo = Trabajo::find($id);
 	if(empty($trabajo)){
 		$app->render(404,array(
 			'error' => TRUE,
@@ -507,7 +507,7 @@ $app->put('/trabajos/:id', function ($id) use ($app) {
     $app->render(200,array('data' => $trabajo->toArray()));
 });
 $app->get('/trabajos/:id', function ($id) use ($app) {
-	$trabajo = Image::find($id);
+	$trabajo = Trabajo::find($id);
 	if(empty($trabajo)){
 		$app->render(404,array(
 			'error' => TRUE,
@@ -517,7 +517,7 @@ $app->get('/trabajos/:id', function ($id) use ($app) {
 	$app->render(200,array('data' => $trabajo->toArray()));
 });
 $app->delete('/trabajos/:id', function ($id) use ($app) {
-	$trabajo = Image::find($id);
+	$trabajo = Trabajo::find($id);
 	if(empty($trabajo)){
 		$app->render(404,array(
 			'error' => TRUE,
