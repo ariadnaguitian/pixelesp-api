@@ -10,7 +10,7 @@ require 'Models/Imagen.php';
 require 'Models/Noticia.php';
 require 'Models/Post.php';
 require 'Models/comment.php';
-require 'Models/trabajos.php';
+require 'Models/trabajo.php';
 
 
 
