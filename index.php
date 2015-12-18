@@ -10,6 +10,9 @@ require 'Models/Imagen.php';
 require 'Models/Noticia.php';
 require 'Models/Post.php';
 require 'Models/comment.php';
+require 'Models/trabajos.php';
+
+
 
 function simple_encrypt($text,$salt){  
    return trim(base64_encode(mcrypt_encrypt(MCRYPT_RIJNDAEL_256, $salt, $text, MCRYPT_MODE_ECB, mcrypt_create_iv(mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB), MCRYPT_RAND))));
@@ -436,8 +439,94 @@ $app->delete('/imagenes/:id', function ($id) use ($app) {
 });
 
 
+//trabajos:
+
+$app->get('/trabajos', function () use ($app) {
+	$db = $app->db->getConnection();
+	$trabajos = $db->table('trabajos')->select()->orderby('created_at','desc')->get();
+	$app->render(200,array('data' => $trabajos));
+});
+
+$app->post('/trabajos', function () use ($app) {
+	$input = $app->request->getBody();
+
+	$Titulo = $input['Titulo'];
+
+ 	if(empty($Titulo)){
+		$app->render(500,array(
+			'error' => TRUE,
+            'msg'   => 'Titulo is required',
+        ));
+	}
+	$Descripcion = $input['Descripcion'];
+	if(empty($Descripcion)){
+		$app->render(500,array(
+			'error' => TRUE,
+            'msg'   => 'Descripcion is required',
+        ));
+	}
+		
+    $trabajo = new Image();
+    $trabajo->Titulo = $Titulo;
+    $trabajo->Descripcion = $Descripcion;
+ 
+     
+    $trabajo->save();
+    $app->render(200,array('data' => $trabajo->toArray()));
+});
 
 
+$app->put('/trabajos/:id', function ($id) use ($app) {
+	$input = $app->request->getBody();
+	
+	$Titulo = $input['Titulo'];
+	if(empty($Titulo)){
+		$app->render(500,array(
+			'error' => TRUE,
+            'msg'   => 'Titulo is required',
+        ));
+	}
+	$Descripcion = $input['Descripcion'];
+	if(empty($Descripcion)){
+		$app->render(500,array(
+			'error' => TRUE,
+            'msg'   => 'Descripcion is required',
+        ));
+	}
+
+	$trabajo = Image::find($id);
+	if(empty($trabajo)){
+		$app->render(404,array(
+			'error' => TRUE,
+            'msg'   => 'trabajo not found',
+        ));
+	}
+    $trabajo->Titulo = $Titulo;
+    $trabajo->Descripcion = $Descripcion;
+    $trabajo->save();
+    $app->render(200,array('data' => $trabajo->toArray()));
+});
+$app->get('/trabajos/:id', function ($id) use ($app) {
+	$trabajo = Image::find($id);
+	if(empty($trabajo)){
+		$app->render(404,array(
+			'error' => TRUE,
+            'msg'   => 'trabajo not found',
+        ));
+	}
+	$app->render(200,array('data' => $trabajo->toArray()));
+});
+$app->delete('/trabajos/:id', function ($id) use ($app) {
+	$trabajo = Image::find($id);
+	if(empty($trabajo)){
+		$app->render(404,array(
+			'error' => TRUE,
+            'msg'   => 'trabajo not found',
+        ));
+	}
+	$trabajo->delete();
+	$app->render(200);
+});
 
 
 
