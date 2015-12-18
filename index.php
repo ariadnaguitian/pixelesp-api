@@ -6,8 +6,13 @@ error_reporting(-1);
 
 require 'vendor/autoload.php';
 require 'Models/User.php';
-require 'Models/image.php';
+require 'Models/Imagen.php';
 require 'Models/Noticia.php';
+require 'Models/Post.php';
+require 'Models/comment.php';
+require 'Models/trabajo.php';
+
+
 
 function simple_encrypt($text,$salt){  
    return trim(base64_encode(mcrypt_encrypt(MCRYPT_RIJNDAEL_256, $salt, $text, MCRYPT_MODE_ECB, mcrypt_create_iv(mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB), MCRYPT_RAND))));
@@ -245,24 +250,6 @@ $app->delete('/usuarios/:id', function ($id) use ($app) {
 });
 
 
-$app->get('/imagenes', function () use ($app) {
-	$db = $app->db->getConnection();
-	$images = $db->table('imagenes')->select('Id', 'IdUsuario')->get();
-	$app->render(200,array('data' => $images));
-});
-
-
-$app->get('/imagenes/:Id', function ($Id) use ($app) {
-	$image=Image::find($Id);
-	if(empty($image)){
-		$app->render(404,array(
-			'error' => TRUE,
-            'msg'   => 'Imagen not found',
-        ));
-	}
-	$app->render(200,array('data' => $image->toArray()));
-});
-
 $app->get('/noticias', function () use ($app) {
 	$db = $app->db->getConnection();
 	$images = $db->table('noticias')->select()->orderby('created_at','desc')->get();
@@ -352,6 +339,411 @@ $app->delete('/noticias/:id', function ($id) use ($app) {
 
 
 
+
+
+
+
+
+$app->get('/imagenes', function () use ($app) {
+	$db = $app->db->getConnection();
+	$imagenes = $db->table('imagenes')->select()->orderby('created_at','desc')->get();
+	$app->render(200,array('data' => $imagenes));
+});
+
+$app->post('/imagenes', function () use ($app) {
+	$input = $app->request->getBody();
+
+	$Titulo = $input['Titulo'];
+
+ 	if(empty($Titulo)){
+		$app->render(500,array(
+			'error' => TRUE,
+            'msg'   => 'Titulo is required',
+        ));
+	}
+	$Descripcion = $input['Descripcion'];
+	if(empty($Descripcion)){
+		$app->render(500,array(
+			'error' => TRUE,
+            'msg'   => 'Descripcion is required',
+        ));
+	}
+		
+    $imagen = new Image();
+    $imagen->Titulo = $Titulo;
+    $imagen->Descripcion = $Descripcion;
+ 
+     
+    $imagen->save();
+    $app->render(200,array('data' => $imagen->toArray()));
+});
+
+
+$app->put('/imagenes/:id', function ($id) use ($app) {
+	$input = $app->request->getBody();
+	
+	$Titulo = $input['Titulo'];
+	if(empty($Titulo)){
+		$app->render(500,array(
+			'error' => TRUE,
+            'msg'   => 'Titulo is required',
+        ));
+	}
+	$Descripcion = $input['Descripcion'];
+	if(empty($Descripcion)){
+		$app->render(500,array(
+			'error' => TRUE,
+            'msg'   => 'Descripcion is required',
+        ));
+	}
+
+	$imagen = Image::find($id);
+	if(empty($imagen)){
+		$app->render(404,array(
+			'error' => TRUE,
+            'msg'   => 'imagen not found',
+        ));
+	}
+    $imagen->Titulo = $Titulo;
+    $imagen->Descripcion = $Descripcion;
+    $imagen->save();
+    $app->render(200,array('data' => $imagen->toArray()));
+});
+$app->get('/imagenes/:id', function ($id) use ($app) {
+	$imagen = Image::find($id);
+	if(empty($imagen)){
+		$app->render(404,array(
+			'error' => TRUE,
+            'msg'   => 'imagen not found',
+        ));
+	}
+	$app->render(200,array('data' => $imagen->toArray()));
+});
+$app->delete('/imagenes/:id', function ($id) use ($app) {
+	$imagen = Image::find($id);
+	if(empty($imagen)){
+		$app->render(404,array(
+			'error' => TRUE,
+            'msg'   => 'imagen not found',
+        ));
+	}
+	$imagen->delete();
+	$app->render(200);
+});
+
+
+//trabajos:
+
+$app->get('/trabajos', function () use ($app) {
+	$db = $app->db->getConnection();
+	$trabajos = $db->table('trabajos')->select()->orderby('created_at','desc')->get();
+	$app->render(200,array('data' => $trabajos));
+});
+
+$app->post('/trabajos', function () use ($app) {
+	$input = $app->request->getBody();
+
+	$Titulo = $input['Titulo'];
+
+ 	if(empty($Titulo)){
+		$app->render(500,array(
+			'error' => TRUE,
+            'msg'   => 'Titulo is required',
+        ));
+	}
+	$Descripcion = $input['Descripcion'];
+	if(empty($Descripcion)){
+		$app->render(500,array(
+			'error' => TRUE,
+            'msg'   => 'Descripcion is required',
+        ));
+	}
+		
+    $trabajo = new Trabajo();
+    $trabajo->Titulo = $Titulo;
+    $trabajo->Descripcion = $Descripcion;
+ 
+     
+    $trabajo->save();
+    $app->render(200,array('data' => $trabajo->toArray()));
+});
+
+
+$app->put('/trabajos/:id', function ($id) use ($app) {
+	$input = $app->request->getBody();
+	
+	$Titulo = $input['Titulo'];
+	if(empty($Titulo)){
+		$app->render(500,array(
+			'error' => TRUE,
+            'msg'   => 'Titulo is required',
+        ));
+	}
+	$Descripcion = $input['Descripcion'];
+	if(empty($Descripcion)){
+		$app->render(500,array(
+			'error' => TRUE,
+            'msg'   => 'Descripcion is required',
+        ));
+	}
+
+	$trabajo = Trabajo::find($id);
+	if(empty($trabajo)){
+		$app->render(404,array(
+			'error' => TRUE,
+            'msg'   => 'trabajo not found',
+        ));
+	}
+    $trabajo->Titulo = $Titulo;
+    $trabajo->Descripcion = $Descripcion;
+    $trabajo->save();
+    $app->render(200,array('data' => $trabajo->toArray()));
+});
+$app->get('/trabajos/:id', function ($id) use ($app) {
+	$trabajo = Trabajo::find($id);
+	if(empty($trabajo)){
+		$app->render(404,array(
+			'error' => TRUE,
+            'msg'   => 'trabajo not found',
+        ));
+	}
+	$app->render(200,array('data' => $trabajo->toArray()));
+});
+$app->delete('/trabajos/:id', function ($id) use ($app) {
+	$trabajo = Trabajo::find($id);
+	if(empty($trabajo)){
+		$app->render(404,array(
+			'error' => TRUE,
+            'msg'   => 'trabajo not found',
+        ));
+	}
+	$trabajo->delete();
+	$app->render(200);
+});
+
+
+
+
+
+
+$app->get('/post/:id', function ($id) use ($app) {
+	$db = $app->db->getConnection();
+	$post = Post::find($id);
+	if(empty($post)){
+		$app->render(404,array(
+			'error' => TRUE,
+            'msg'   => 'post not found',
+        ));
+	}
+
+	/*
+	$post->user = User::find($post->id_usuario);
+	*/
+
+	$post->user = $db->table('usuarios')->select('id','name', 'email')->where('id', $post->id_usuario)->get();
+
+	unset($post->id_usuario);
+	
+	$app->render(200,array('data' => $post->toArray()));
+});
+
+$app->post('/post', function () use ($app) {
+	$token = $app->request->headers->get('auth-token');
+
+	if(empty($token)){
+		$app->render(500,array(
+			'error' => TRUE,
+            'msg'   => 'Not logged',
+        ));
+	}
+
+	$id_user_token = simple_decrypt($token, $app->enc_key);
+
+	$user = User::find($id_user_token);
+	if(empty($user)){
+		$app->render(500,array(
+			'error' => TRUE,
+            'msg'   => 'Not logged',
+        ));
+	}
+
+	$input = $app->request->getBody();
+	
+	$title = $input['title'];
+	if(empty($title)){
+		$app->render(500,array(
+			'error' => TRUE,
+            'msg'   => 'title is required',
+        ));
+	}
+	
+	$post = new Post();
+	$post->title = $title;
+    $post->id_usuario = $user->id;
+    $post->save();
+    $app->render(200,array('data' => $post->toArray()));
+});
+
+$app->post('/post/:id/comment', function ($id) use ($app) {
+	$token = $app->request->headers->get('auth-token');
+
+	if(empty($token)){
+		$app->render(500,array(
+			'error' => TRUE,
+            'msg'   => 'Not logged',
+        ));
+	}
+
+	$id_user_token = simple_decrypt($token, $app->enc_key);
+
+	$user = User::find($id_user_token);
+	if(empty($user)){
+		$app->render(500,array(
+			'error' => TRUE,
+            'msg'   => 'Not logged',
+        ));
+	}
+
+	$db = $app->db->getConnection();
+	$post = Post::find($id);
+	if(empty($post)){
+		$app->render(404,array(
+			'error' => TRUE,
+            'msg'   => 'post not found',
+        ));
+	}
+
+	$input = $app->request->getBody();
+	$text = $input['text'];
+	if(empty($text)){
+		$app->render(500,array(
+			'error' => TRUE,
+            'msg'   => 'text is required',
+        ));
+	}
+
+	$comment = new Comment();
+	$comment->text = $text;
+	$comment->id_usuario = $user->id;
+	$comment->id_post = $post->id;
+	$comment->save();
+	
+	$app->render(200,array('data' => $comment->toArray()));
+});
+
+$app->post('/post/:id/multicomment', function ($id) use ($app) {
+	$token = $app->request->headers->get('auth-token');
+
+	if(empty($token)){
+		$app->render(500,array(
+			'error' => TRUE,
+            'msg'   => 'Not logged',
+        ));
+	}
+
+	$id_user_token = simple_decrypt($token, $app->enc_key);
+
+	$user = User::find($id_user_token);
+	if(empty($user)){
+		$app->render(500,array(
+			'error' => TRUE,
+            'msg'   => 'Not logged',
+        ));
+	}
+
+	$db = $app->db->getConnection();
+	$post = Post::find($id);
+	if(empty($post)){
+		$app->render(404,array(
+			'error' => TRUE,
+            'msg'   => 'post not found',
+        ));
+	}
+
+	$input = $app->request->getBody();
+	$text = $input['text'];
+	if(empty($text)){
+		$app->render(500,array(
+			'error' => TRUE,
+            'msg'   => 'text is required',
+        ));
+	}
+
+	$text_array = explode(',', $text);
+
+	$created = array();
+
+	foreach ($text_array as $key => $text) {
+		$comment = new Comment();
+		$comment->text = $text;
+		$comment->id_usuario = $user->id;
+		$comment->id_post = $post->id;
+		$comment->save();
+		$created[] = $comment->toArray();
+	}
+
+	$app->render(200,array('data' => $created));
+});
+
+$app->get('/profile', function () use ($app) {
+	$token = $app->request->headers->get('auth-token');
+
+	if(empty($token)){
+		$app->render(500,array(
+			'error' => TRUE,
+            'msg'   => 'Not logged',
+        ));
+	}
+
+	$id_user_token = simple_decrypt($token, $app->enc_key);
+
+	$user = User::find($id_user_token);
+	if(empty($user)){
+		$app->render(500,array(
+			'error' => TRUE,
+            'msg'   => 'Not logged',
+        ));
+	}
+
+	$db = $app->db->getConnection();
+	$posts = $db->table('posts')->select()->where('id_usuario', $user->id)->get();
+
+	foreach ($posts as $key => $post) {
+		$comments = $db->table('comments')->select()->where('id_post', $post->id)->get();
+		foreach ($comments as $keyc => $comment) {
+			$comments[$keyc]->user = User::find($comment->id_usuario);
+		}
+		$posts[$key]->comments = $comments;
+	}
+	
+	$app->render(200,array('data' => $posts));
+});
+
+$app->post('/findcomments', function () use ($app) {
+	$input = $app->request->getBody();
+	$text = $input['text'];
+	if(empty($text)){
+		$app->render(500,array(
+			'error' => TRUE,
+            'msg'   => 'text is required',
+        ));
+	}
+
+
+	$db = $app->db->getConnection();
+	$query = $db->table('comments')->select()->where('text', 'like', '%'.$text.'%');
+
+	if(isset($input['user'])){
+		$user = $input['user'];
+		if(!empty($user)){
+			$query = $query->where('id_usuario', $user);
+		}
+	}	
+
+	$comments = $query->get();
+
+	$app->render(200,array('data' => $comments));
+});
 
 $app->run();
 ?>
