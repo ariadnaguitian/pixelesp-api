@@ -466,7 +466,7 @@ $app->post('/trabajos', function () use ($app) {
         ));
 	}
 		
-    $trabajo = new Image();
+    $trabajo = new Trabajo();
     $trabajo->Titulo = $Titulo;
     $trabajo->Descripcion = $Descripcion;
  
