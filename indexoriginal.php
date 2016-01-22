@@ -84,7 +84,7 @@ $user =$db->table('usuarios')->select()->where('email', $email)->first();
         ));
     }
 
-        if($user->password != $password){
+    if($user->password != $password){
         $app->render(500,array(
             'error' => TRUE,
             'msg'   => 'password dont match',
@@ -239,7 +239,7 @@ $app->get('/usuarios/:id', function ($id) use ($app) {
 	unset($user->password);
  	unset($user->email);
  
- 	$user->imagenes = $db->table('imagenes')->select('Titulo')->where('IdUsuario', $user->id)->get();
+ 	$user->imagenes = $db->table('posts')->select('title')->where('id_usuario', $user->id)->get();
 	$app->render(200,array('data' => $user->toArray()));
 });
 $app->delete('/usuarios/:id', function ($id) use ($app) {
@@ -257,7 +257,7 @@ $app->delete('/usuarios/:id', function ($id) use ($app) {
 
 $app->get('/post/:id', function ($id) use ($app) {
  	$db = $app->db->getConnection();
- 	$post = Image::find($id);
+ 	$post = Post::find($id);
  	if(empty($post)){
  		$app->render(404,array(
  			'error' => TRUE,
@@ -399,7 +399,6 @@ $app->post('/imagenes', function () use ($app) {
     $imagen = new Image();
     $imagen->Titulo = $Titulo;
     $imagen->Descripcion = $Descripcion;
-      $imagen->IdUsuario = $user->id;
  
      
     $imagen->save();
@@ -554,13 +553,13 @@ $app->delete('/trabajos/:id', function ($id) use ($app) {
 
 
 
-$app->get('/imagenes/:id', function ($id) use ($app) {
+$app->get('/post/:id', function ($id) use ($app) {
 	$db = $app->db->getConnection();
-	$imagen = Image::find($id);
-	if(empty($imagenes)){
+	$post = Post::find($id);
+	if(empty($post)){
 		$app->render(404,array(
 			'error' => TRUE,
-            'msg'   => 'imagen not found',
+            'msg'   => 'post not found',
         ));
 	}
 
@@ -568,14 +567,14 @@ $app->get('/imagenes/:id', function ($id) use ($app) {
 	$post->user = User::find($post->id_usuario);
 	*/
 
-	$imagen->user = $db->table('usuarios')->select('id','name', 'email')->where('id', $imagen->IdUsuario)->get();
+	$post->user = $db->table('usuarios')->select('id','name', 'email')->where('id', $post->id_usuario)->get();
 
-	unset($imagen->id_usuario);
+	unset($post->id_usuario);
 	
-	$app->render(200,array('data' => $imagen->toArray()));
+	$app->render(200,array('data' => $post->toArray()));
 });
 
-$app->post('/imagen', function () use ($app) {
+$app->post('/post', function () use ($app) {
 	$token = $app->request->headers->get('auth-token');
 
 	if(empty($token)){
@@ -605,14 +604,14 @@ $app->post('/imagen', function () use ($app) {
         ));
 	}
 	
-	$imagen = new Image();
-	$imagen->title = $title;
-    $imagen->IdUsuario = $user->id;
-    $imagen->save();
-    $app->render(200,array('data' => $imagen->toArray()));
+	$post = new Post();
+	$post->title = $title;
+    $post->id_usuario = $user->id;
+    $post->save();
+    $app->render(200,array('data' => $post->toArray()));
 });
 
-$app->post('/imagenes/:id/comment', function ($id) use ($app) {
+$app->post('/post/:id/comment', function ($id) use ($app) {
 	$token = $app->request->headers->get('auth-token');
 
 	if(empty($token)){
@@ -633,11 +632,11 @@ $app->post('/imagenes/:id/comment', function ($id) use ($app) {
 	}
 
 	$db = $app->db->getConnection();
-	$imagen = Image::find($id);
-	if(empty($imagen)){
+	$post = Post::find($id);
+	if(empty($post)){
 		$app->render(404,array(
 			'error' => TRUE,
-            'msg'   => 'imagen not found',
+            'msg'   => 'post not found',
         ));
 	}
 
@@ -653,13 +652,13 @@ $app->post('/imagenes/:id/comment', function ($id) use ($app) {
 	$comment = new Comment();
 	$comment->text = $text;
 	$comment->id_usuario = $user->id;
-	$comment->id_imagen= $imagen->id;
+	$comment->id_post = $post->id;
 	$comment->save();
 	
 	$app->render(200,array('data' => $comment->toArray()));
 });
 
-$app->post('/imagenes/:id/multicomment', function ($id) use ($app) {
+$app->post('/post/:id/multicomment', function ($id) use ($app) {
 	$token = $app->request->headers->get('auth-token');
 
 	if(empty($token)){
@@ -680,11 +679,11 @@ $app->post('/imagenes/:id/multicomment', function ($id) use ($app) {
 	}
 
 	$db = $app->db->getConnection();
-	$iamgen = Image::find($id);
-	if(empty($iamgen)){
+	$post = Post::find($id);
+	if(empty($post)){
 		$app->render(404,array(
 			'error' => TRUE,
-            'msg'   => 'imagen not found',
+            'msg'   => 'post not found',
         ));
 	}
 
@@ -705,7 +704,7 @@ $app->post('/imagenes/:id/multicomment', function ($id) use ($app) {
 		$comment = new Comment();
 		$comment->text = $text;
 		$comment->id_usuario = $user->id;
-		$comment->id_imagen= $imagen->id;
+		$comment->id_post = $post->id;
 		$comment->save();
 		$created[] = $comment->toArray();
 	}
@@ -734,17 +733,17 @@ $app->get('/profile', function () use ($app) {
 	}
 
 	$db = $app->db->getConnection();
-	$imagenes = $db->table('imagenes')->select()->where('id_usuario', $user->id)->get();
+	$posts = $db->table('posts')->select()->where('id_usuario', $user->id)->get();
 
-	foreach ($imagenes as $key => $imagen) {
-		$comments = $db->table('comments')->select()->where('id_imagent', $imagen->id)->get();
+	foreach ($posts as $key => $post) {
+		$comments = $db->table('comments')->select()->where('id_post', $post->id)->get();
 		foreach ($comments as $keyc => $comment) {
 			$comments[$keyc]->user = User::find($comment->id_usuario);
 		}
-		$imagenes[$key]->comments = $comments;
+		$posts[$key]->comments = $comments;
 	}
 	
-	$app->render(200,array('data' => $imagenes));
+	$app->render(200,array('data' => $posts));
 });
 
 $app->post('/findcomments', function () use ($app) {
