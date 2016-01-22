@@ -621,7 +621,13 @@ $app->post('/imagenes/:id/comment', function ($id) use ($app) {
             'msg'   => 'Not logged',
         ));
 	}
+$app->get('/imagenes/:id/comment', function () use ($app) {
+	$db = $app->db->getConnection();
+	$comments = $db->table('comments')->select()->orderby('created_at','desc')->get();
+	$app->render(200,array('data' => $comments));
 
+	
+});
 	$id_user_token = simple_decrypt($token, $app->enc_key);
 
 	$user = User::find($id_user_token);
