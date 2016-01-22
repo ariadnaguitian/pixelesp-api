@@ -734,7 +734,7 @@ $app->get('/profile', function () use ($app) {
 	}
 
 	$db = $app->db->getConnection();
-	$imagenes = $db->table('imagenes')->select()->where('id_usuario', $user->id)->get();
+	$imagenes = $db->table('imagenes')->select()->where('IdUsuario', $user->id)->get();
 
 	foreach ($imagenes as $key => $imagen) {
 		$comments = $db->table('comments')->select()->where('id_imagen', $imagen->id)->get();
