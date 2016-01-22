@@ -737,7 +737,7 @@ $app->get('/profile', function () use ($app) {
 	$imagenes = $db->table('imagenes')->select()->where('id_usuario', $user->id)->get();
 
 	foreach ($imagenes as $key => $imagen) {
-		$comments = $db->table('comments')->select()->where('id_imagent', $imagen->id)->get();
+		$comments = $db->table('comments')->select()->where('id_imagen', $imagen->id)->get();
 		foreach ($comments as $keyc => $comment) {
 			$comments[$keyc]->user = User::find($comment->id_usuario);
 		}
