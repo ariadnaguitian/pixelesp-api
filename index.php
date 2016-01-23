@@ -469,26 +469,6 @@ $app->get('/comments', function () use ($app) {
 	$app->render(200,array('data' => $comments));
 });
 
-$app->post('/comments', function () use ($app) {
-	$input = $app->request->getBody();
-
-	$text = $input['text'];
-
- 	if(empty($text)){
-		$app->render(500,array(
-			'error' => TRUE,
-            'msg'   => 'texto is required',
-        ));
-	}
-		
-    $comment = new Comment();
-    $comment->text = $text;
-      $comment->IdUsuario = $user->id;
- 
-     
-    $comment->save();
-    $app->render(200,array('data' => $comment->toArray()));
-});
 
 
 $app->put('/comments/:id', function ($id) use ($app) {
@@ -698,8 +678,10 @@ $app->post('/imagenes/:id/comment', function ($id) use ($app) {
 	}
 $app->get('/imagenes/:id/comment', function () use ($app) {
 	$db = $app->db->getConnection();
-	$comments = $db->table('comments')->select()->orderby('created_at','desc')->get();
-	$app->render(200,array('data' => $comments));
+	$comments->imagen= $db->table('imagenes')->select()->where('id', $comments->id_imagen)->orderby('created_at','desc')->get();
+	//$comments = $db->table('comments')->select()->orderby('created_at','desc')->get();
+	//$imagen->user = $db->table('usuarios')->select('id','name', 'email')->where('id', $imagen->IdUsuario)->get();
+	$app->render(200,array('data' =>$comments));
 
 
 });
