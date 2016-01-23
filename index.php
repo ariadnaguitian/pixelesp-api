@@ -677,11 +677,25 @@ $app->post('/imagenes/:id/comment', function ($id) use ($app) {
         ));
 	}
 $app->get('/imagenes/:id/comment', function () use ($app) {
-	$db = $app->db->getConnection();
+		$db = $app->db->getConnection();
+	$comments= Comment::find($id);
+	if(empty($comments)){
+		$app->render(404,array(
+			'error' => TRUE,
+            'msg'   => 'imagen not found',
+        ));
+	}
+
 	$comments->imagen= $db->table('imagenes')->select()->where('id', $comments->id_imagen)->orderby('created_at','desc')->get();
 	//$comments = $db->table('comments')->select()->orderby('created_at','desc')->get();
 	//$imagen->user = $db->table('usuarios')->select('id','name', 'email')->where('id', $imagen->IdUsuario)->get();
-	$app->render(200,array('data' =>$comments));
+
+
+	unset($comments->id_usuario);
+	
+
+
+	$app->render(200,array('data' =>$comments->toArray()));
 
 
 });
