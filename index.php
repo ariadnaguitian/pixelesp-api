@@ -461,13 +461,15 @@ $app->delete('/imagenes/:id', function ($id) use ($app) {
 
 
 //comentarios:
-$app->get('/comments', function () use ($app) {
+
+
+$app->get('imagenes/comments', function () use ($app) {
 	$db = $app->db->getConnection();
 	$comments = $db->table('comments')->select()->orderby('created_at','desc')->get();
 	$app->render(200,array('data' => $comments));
 });
 
-$app->post('/comments', function () use ($app) {
+$app->post('imagenes/comments', function () use ($app) {
 	$input = $app->request->getBody();
 
 	$text = $input['text'];
@@ -489,7 +491,7 @@ $app->post('/comments', function () use ($app) {
 });
 
 
-$app->put('/comments/:id', function ($id) use ($app) {
+$app->put('imagenes/:id/comments', function ($id) use ($app) {
 	$input = $app->request->getBody();
 	
 	$text = $input['text'];
@@ -511,7 +513,7 @@ $app->put('/comments/:id', function ($id) use ($app) {
     $comment->save();
     $app->render(200,array('data' => $comment->toArray()));
 });
-$app->get('/comments/:id', function ($id) use ($app) {
+$app->get('imagenes/:id/comments', function ($id) use ($app) {
 	$comment = Comment::find($id);
 	if(empty($comment)){
 		$app->render(404,array(
@@ -521,7 +523,7 @@ $app->get('/comments/:id', function ($id) use ($app) {
 	}
 	$app->render(200,array('data' => $comment->toArray()));
 });
-$app->delete('/comments/:id', function ($id) use ($app) {
+$app->delete('imagenes/:id/comments', function ($id) use ($app) {
 	$comment = Comment::find($id);
 	if(empty($comment)){
 		$app->render(404,array(
