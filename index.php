@@ -460,6 +460,79 @@ $app->delete('/imagenes/:id', function ($id) use ($app) {
 });
 
 
+//comentarios:
+$app->get('/comments', function () use ($app) {
+	$db = $app->db->getConnection();
+	$comments = $db->table('comments')->select()->orderby('created_at','desc')->get();
+	$app->render(200,array('data' => $comments));
+});
+
+$app->post('/comments', function () use ($app) {
+	$input = $app->request->getBody();
+
+	$text = $input['text'];
+
+ 	if(empty($text)){
+		$app->render(500,array(
+			'error' => TRUE,
+            'msg'   => 'texto is required',
+        ));
+	}
+		
+    $comment = new Comment();
+    $comment->text = $text;
+      $comment->IdUsuario = $user->id;
+ 
+     
+    $comment->save();
+    $app->render(200,array('data' => $comment->toArray()));
+});
+
+
+$app->put('/comments/:id', function ($id) use ($app) {
+	$input = $app->request->getBody();
+	
+	$text = $input['text'];
+	if(empty($text)){
+		$app->render(500,array(
+			'error' => TRUE,
+            'msg'   => 'text is required',
+        ));
+	}
+
+	$comment = Comment::find($id);
+	if(empty($comment)){
+		$app->render(404,array(
+			'error' => TRUE,
+            'msg'   => 'comment not found',
+        ));
+	}
+    $comment->text = $text;
+    $comment->save();
+    $app->render(200,array('data' => $comment->toArray()));
+});
+$app->get('/comments/:id', function ($id) use ($app) {
+	$comment = Comment::find($id);
+	if(empty($comment)){
+		$app->render(404,array(
+			'error' => TRUE,
+            'msg'   => 'comment not found',
+        ));
+	}
+	$app->render(200,array('data' => $comment->toArray()));
+});
+$app->delete('/comments/:id', function ($id) use ($app) {
+	$comment = Comment::find($id);
+	if(empty($comment)){
+		$app->render(404,array(
+			'error' => TRUE,
+            'msg'   => 'comment not found',
+        ));
+	}
+	$comment->delete();
+	$app->render(200);
+});
+
 //trabajos:
 
 $app->get('/trabajos', function () use ($app) {
@@ -626,7 +699,7 @@ $app->get('/imagenes/:id/comment', function () use ($app) {
 	$comments = $db->table('comments')->select()->orderby('created_at','desc')->get();
 	$app->render(200,array('data' => $comments));
 
-	
+
 });
 	$id_user_token = simple_decrypt($token, $app->enc_key);
 
