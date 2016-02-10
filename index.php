@@ -10,6 +10,7 @@ require 'Models/Imagen.php';
 require 'Models/Noticia.php';
 require 'Models/Post.php';
 require 'Models/comment.php';
+require 'Models/NewsComment.php';
 require 'Models/trabajo.php';
 
 
@@ -515,6 +516,59 @@ $app->delete('/comments/:id', function ($id) use ($app) {
 	$app->render(200);
 });
 
+//comentarios de noticias:
+
+$app->get('/newscomments', function () use ($app) {
+	$db = $app->db->getConnection();
+	$newscomments = $db->table('newscomments')->select()->orderby('created_at','desc')->get();
+	$app->render(200,array('data' => $newscomments));
+});
+
+
+
+$app->put('/newscomments/:id', function ($id) use ($app) {
+	$input = $app->request->getBody();
+	
+	$text = $input['text'];
+	if(empty($text)){
+		$app->render(500,array(
+			'error' => TRUE,
+            'msg'   => 'text is required',
+        ));
+	}
+
+	$newscomment = NewsComment::find($id);
+	if(empty($newscomment)){
+		$app->render(404,array(
+			'error' => TRUE,
+            'msg'   => 'newscomment not found',
+        ));
+	}
+    $newscomment->text = $text;
+    $newscomment->save();
+    $app->render(200,array('data' => $newscomment->toArray()));
+});
+$app->get('/newscomments/:id', function ($id) use ($app) {
+	$newscomment = newsComment::find($id);
+	if(empty($newscomment)){
+		$app->render(404,array(
+			'error' => TRUE,
+            'msg'   => 'newscomment not found',
+        ));
+	}
+	$app->render(200,array('data' => $newscomment->toArray()));
+});
+$app->delete('/newscomments/:id', function ($id) use ($app) {
+	$newscomment = NewsComment::find($id);
+	if(empty($newscomment)){
+		$app->render(404,array(
+			'error' => TRUE,
+            'msg'   => 'comment not found',
+        ));
+	}
+	$comment->delete();
+	$app->render(200);
+});
 //trabajos:
 
 $app->get('/trabajos', function () use ($app) {
@@ -677,25 +731,9 @@ $app->post('/imagenes/:id/comment', function ($id) use ($app) {
         ));
 	}
 $app->get('/imagenes/:id/comment', function () use ($app) {
-		$db = $app->db->getConnection();
-	$comments= Comment::find($id);
-	if(empty($comments)){
-		$app->render(404,array(
-			'error' => TRUE,
-            'msg'   => 'imagen not found',
-        ));
-	}
-
-	$comments->imagen= $db->table('imagenes')->select()->where('id', $comments->id_imagen)->orderby('created_at','desc')->get();
-	//$comments = $db->table('comments')->select()->orderby('created_at','desc')->get();
-	//$imagen->user = $db->table('usuarios')->select('id','name', 'email')->where('id', $imagen->IdUsuario)->get();
-
-
-	unset($comments->id_usuario);
-	
-
-
-	$app->render(200,array('data' =>$comments->toArray()));
+	$db = $app->db->getConnection();
+	$comments = $db->table('comments')->select()->orderby('created_at','desc')->get();
+	$app->render(200,array('data' =>$comments));
 
 
 });
@@ -849,6 +887,250 @@ $app->post('/findcomments', function () use ($app) {
 
 	$app->render(200,array('data' => $comments));
 });
+
+
+
+
+
+
+
+
+
+//Conexion con la tabla favoritos
+$app->get('/fav', function () use ($app) {
+	$db = $app->db->getConnection();
+	$fav = $db->table('favoritos')->select('id', 'id_imagen', 'id_usuario')->get();
+	$app->render(200,array('data' => $fav));
+});
+// agregar favoritos
+$app->post('/favoritos', function () use ($app) {
+  $token = $app->request->headers->get('auth-token');
+	if(empty($token)){
+		$app->render(500,array(
+			'error' => TRUE,
+            'msg'   => 'Not logged',
+        ));
+	}
+	$id_user_token = simple_decrypt($token, $app->enc_key);
+	$user = User::find($id_user_token);
+	if(empty($user)){
+		$app->render(500,array(
+			'error' => TRUE,
+            'msg'   => 'Not logged',
+        ));
+	}
+	
+  $input = $app->request->getBody();
+  
+  $id_imagen = $input['id_imagen'];
+	if(empty($id_imagen)){
+		$app->render(500,array(
+			'error' => TRUE,
+            'msg'   => 'Id anuncio is required',
+        ));
+	}
+	
+	$favorito = new Favorito();
+    $favorito->id_imagen = $id_imagen;
+    $favorito->id_usuario = $user->id;
+    $favorito->save();
+    $app->render(200,array('data' => $favorito->toArray()));
+});
+// Traer favorito especifico para borrar
+$app->get('/misfavoritos', function () use ($app) {
+  $token = $app->request->headers->get('auth-token');
+	if(empty($token)){
+		$app->render(500,array(
+			'error' => TRUE,
+            'msg'   => 'Not logged 12',
+        ));
+	}
+	$id_user_token = simple_decrypt($token, $app->enc_key);
+	$user = User::find($id_user_token);
+	if(empty($user)){
+		$app->render(500,array(
+			'error' => TRUE,
+            'msg'   => 'Not logged 15',
+        ));
+	}
+	
+	$input = $app->request->getBody();
+  
+	  $idanuncio = $input['id_imagen'];
+		if(empty($id_imagen)){
+			$app->render(500,array(
+				'error' => TRUE,
+				'msg'   => 'Id imagen is required',
+			));
+		}
+	
+	$db = $app->db->getConnection();
+	
+	$favoritos = $db->table('favoritos')->select('id', 'id_usuario', 'id_imagen')->where('id_usuario', $user->id)->where('id_imagen', $id_imagen)->get();
+	
+	$app->render(200,array('data' => $favoritos));
+});
+// ver favorito y borrar 
+$app->delete('/delfavoritos', function () use ($app) {
+  $token = $app->request->headers->get('auth-token');
+	if(empty($token)){
+		$app->render(500,array(
+			'error' => TRUE,
+            'msg'   => 'Not logged 13',
+        ));
+	}
+	$id_user_token = simple_decrypt($token, $app->enc_key);
+	$user = User::find($id_user_token);
+	if(empty($user)){
+		$app->render(500,array(
+			'error' => TRUE,
+            'msg'   => 'Not logged 15',
+        ));
+	}
+	
+	
+	$input = $app->request->getBody();
+  
+	  $id_imagen = $input['id_imagen'];
+		if(empty($id_imagen)){
+			$app->render(500,array(
+				'error' => TRUE,
+				'msg'   => 'Id imagen is required',
+			));
+		}
+	
+	$db = $app->db->getConnection();
+	
+	$favoritos = $db->table('favoritos')->select('id', 'id_usuario', 'id_imagen')->where('id_usuario', $user->id)->where('id_imagen', $id_imagen)->get();
+	
+	$idfav = $favoritos->id;
+	
+	$favorito = Favorito::find($idfav);
+	if(empty($favorito)){
+		$app->render(404,array(
+			'error' => TRUE,
+            'msg'   => 'favorito not found 4',
+        ));
+	}
+	$favorito->delete();
+	$app->render(200);
+		
+});
+// listar mis favoritos
+$app->get('/misfavoritoslist', function () use ($app) {
+	
+	$token = $app->request->headers->get('auth-token');
+	if(empty($token)){
+		$app->render(500,array(
+			'error' => TRUE,
+            'msg'   => 'Not logged',
+        ));
+	}
+	$id_user_token = simple_decrypt($token, $app->enc_key);
+	$user = User::find($id_user_token);
+	if(empty($user)){
+		$app->render(500,array(
+			'error' => TRUE,
+            'msg'   => 'Not logged',
+        ));
+	}
+	
+	
+	$db = $app->db->getConnection();
+	
+	$favoritos = $db->table('favoritos')->select('id', 'id_usuario', 'id_imagen')->where('id_usuario', $user->id)->get();
+	foreach ($favoritos as $key => $favoritos) {
+		$imagenes = $db->table('imagenes')->select('id', 'id_usuario', 'titulo', 'precio', 'descripcion', 'barrio')->where('id', $favoritos->id_imagen)->get();
+		
+		$favoritos[$key]->imagenes = $imagenes;
+	}
+		
+	$app->render(200,array('data' => $favoritos));
+});
+// chat con el anunciante
+//Conexion con la tabla favoritos
+$app->get('/chats', function () use ($app) {
+	$db = $app->db->getConnection();
+	$chats = $db->table('chats')->select('id', 'iduserreceptor', 'iduseremisor', 'mensaje')->get();
+	$app->render(200,array('data' => $chats));
+});
+//Buscar por ID
+$app->get('/chat/:id', function ($idr) use ($app) {
+	
+	$userr = User::find($idr);
+	if(empty($userr)){
+		$app->render(404,array(
+			'error' => TRUE,
+            'msg'   => 'user not found',
+        ));
+	}
+	$token = $app->request->headers->get('auth-token');
+	if(empty($token)){
+		$app->render(500,array(
+			'error' => TRUE,
+            'msg'   => 'Not logged',
+        ));
+	}
+	$id_user_token = simple_decrypt($token, $app->enc_key);
+	$user = User::find($id_user_token);
+	if(empty($user)){
+		$app->render(500,array(
+			'error' => TRUE,
+            'msg'   => 'Not logged',
+        ));
+	}
+	$db = $app->db->getConnection();
+	$chats = $db->table('chats')->select('id', 'iduserreceptor', 'iduseremisor', 'mensaje')
+								->where('iduserreceptor', $idr)
+								->where('iduseremisor', $user->id)
+								->get();
+	$app->render(200,array('data' => $userr->toArray()));
+	$app->render(200,array('data' => $chats->toArray()));
+});
+//Insertar Mensaje
+$app->post('/enviarchat', function () use ($app) {
+  $token = $app->request->headers->get('auth-token');
+	if(empty($token)){
+		$app->render(500,array(
+			'error' => TRUE,
+            'msg'   => 'Not logged',
+        ));
+	}
+	$id_user_token = simple_decrypt($token, $app->enc_key);
+	$user = User::find($id_user_token);
+	if(empty($user)){
+		$app->render(500,array(
+			'error' => TRUE,
+            'msg'   => 'Not logged',
+        ));
+	}
+	
+  $input = $app->request->getBody();
+  
+  $iduserreceptor = $input['iduserreceptor'];
+	if(empty($iduserreceptor)){
+		$app->render(500,array(
+			'error' => TRUE,
+            'msg'   => 'Id receptor is required',
+        ));
+	}
+	$mensaje = $input['mensaje'];
+	if(empty($mensaje)){
+		$app->render(500,array(
+			'error' => TRUE,
+            'msg'   => 'Mensaje es necesario',
+        ));
+	}
+	
+	$chat = new Chat();
+    $chat->iduserreceptor = $iduserreceptor;
+    $chat->mensaje = $mensaje;
+    $chat->iduseremisor = $user->id;
+    $chat->save();
+    $app->render(200,array('data' => $chat->toArray()));
+});
+
+
 
 $app->run();
 ?>
