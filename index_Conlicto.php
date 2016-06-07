@@ -10,7 +10,10 @@ require 'Models/Imagen.php';
 require 'Models/Noticia.php';
 require 'Models/Post.php';
 require 'Models/comment.php';
-require 'Models/newscomment.php';
+<<<<<<< HEAD
+require 'Models/NewsComment.php';
+=======
+>>>>>>> f8723e01db25c6fd24fda51cf2aaaf5a55c45ab2
 require 'Models/trabajo.php';
 
 
@@ -77,7 +80,7 @@ $app->post('/login', function () use ($app) {
 	}
 
 	$db = $app->db->getConnection();
-	$user =$db->table('usuarios')->select()->where('email', $email)->first();
+$user =$db->table('usuarios')->select()->where('email', $email)->first();
     if(empty($user)){
         $app->render(500,array(
             'error' => TRUE,
@@ -101,8 +104,8 @@ $app->get('/logout', function() use($app) {
 
 
 $app->get('/me', function () use ($app) {	
-	$token = $app->request->headers->get('auth-token');
-	if(empty($token)){
+$token = $app->request->headers->get('auth-token');
+if(empty($token)){
 		$app->render(500,array(
 			'error' => TRUE,
             'msg'   => 'Not logged1',
@@ -256,6 +259,7 @@ $app->delete('/usuarios/:id', function ($id) use ($app) {
 });
 
 
+<<<<<<< HEAD
 $app->get('/post/:id', function ($id) use ($app) {
  	$db = $app->db->getConnection();
  	$post = Image::find($id);
@@ -278,24 +282,11 @@ $app->get('/post/:id', function ($id) use ($app) {
  });
  
 
+=======
+>>>>>>> f8723e01db25c6fd24fda51cf2aaaf5a55c45ab2
 $app->get('/noticias', function () use ($app) {
 	$db = $app->db->getConnection();
-	$images = $db->table('noticias')->select('noticias.*','usuarios.name')
-	->leftjoin('usuarios', 'usuarios.id', '=', 'noticias.idusuario')
-	->orderby('created_at','desc')
-	->get();
-	foreach ($images as $key => $value) {
-		$newscomment = NewsComments::where('id_noticia', '=', $value->id)
-		->select('newscomments.*','usuarios.name')
-		->leftjoin('usuarios', 'usuarios.id', '=', 'newscomments.idusuario')
-		->get();
-		if(empty($newscomment)){
-			$result = array();
-		} else{
-			$result = $newscomment->toArray(); 
-		}
-		$images[$key]->comentarios = $result;
-	}
+	$images = $db->table('noticias')->select()->orderby('created_at','desc')->get();
 	$app->render(200,array('data' => $images));
 });
 
@@ -415,7 +406,10 @@ $app->post('/imagenes', function () use ($app) {
     $imagen = new Image();
     $imagen->Titulo = $Titulo;
     $imagen->Descripcion = $Descripcion;
+<<<<<<< HEAD
       $imagen->IdUsuario = $user->id;
+=======
+>>>>>>> f8723e01db25c6fd24fda51cf2aaaf5a55c45ab2
  
      
     $imagen->save();
@@ -476,13 +470,8 @@ $app->delete('/imagenes/:id', function ($id) use ($app) {
 });
 
 
+<<<<<<< HEAD
 //comentarios:
-
-$app->get('/comments-by-post/:id', function ($id) use ($app) {	
-	$db = $app->db->getConnection();
-	$comments = $db->table('comments')->select()->where('id_imagen', $id)->orderby('created_at','desc')->get();
-	$app->render(200,array('data' => $comments));	
-});
 
 
 $app->get('/comments', function () use ($app) {
@@ -545,45 +534,7 @@ $app->get('/newscomments', function () use ($app) {
 	$app->render(200,array('data' => $newscomments));
 });
 
-$app->post('/newscomments', function () use ($app) {
-	$input = $app->request->getBody();
 
-	$text = $input['text'];
-	$idusuario = $input['idusuario'];
-	$id_noticia = $input['id_noticia'];
-	
-	if(empty($text)){
-		$app->render(500,array(
-			'error' => TRUE,
-            'msg'   => 'text is required',
-        ));
-	}	
-	
-	if(empty($idusuario)){
-		$app->render(500,array(
-			'error' => TRUE,
-            'msg'   => 'idusuario is required',
-        ));
-	}
-	
-	if(empty($id_noticia)){
-		$app->render(500,array(
-			'error' => TRUE,
-            'msg'   => 'id_noticia is required',
-        ));
-	}
-
-
-		
-    $newscomment = new NewsComments();
-    $newscomment->idusuario  = $idusuario;
-    $newscomment->id_noticia = $id_noticia;
-    $newscomment->text 		 = $text;
- 
-     
-    $newscomment->save();
-    $app->render(200,array('data' => $newscomment->toArray()));
-});
 
 $app->put('/newscomments/:id', function ($id) use ($app) {
 	$input = $app->request->getBody();
@@ -596,7 +547,7 @@ $app->put('/newscomments/:id', function ($id) use ($app) {
         ));
 	}
 
-	$newscomment = NewsComments::find($id);
+	$newscomment = NewsComment::find($id);
 	if(empty($newscomment)){
 		$app->render(404,array(
 			'error' => TRUE,
@@ -608,7 +559,7 @@ $app->put('/newscomments/:id', function ($id) use ($app) {
     $app->render(200,array('data' => $newscomment->toArray()));
 });
 $app->get('/newscomments/:id', function ($id) use ($app) {
-	$newscomment = NewsComments::find($id);
+	$newscomment = newsComment::find($id);
 	if(empty($newscomment)){
 		$app->render(404,array(
 			'error' => TRUE,
@@ -618,7 +569,7 @@ $app->get('/newscomments/:id', function ($id) use ($app) {
 	$app->render(200,array('data' => $newscomment->toArray()));
 });
 $app->delete('/newscomments/:id', function ($id) use ($app) {
-	$newscomment = NewsComments::find($id);
+	$newscomment = NewsComment::find($id);
 	if(empty($newscomment)){
 		$app->render(404,array(
 			'error' => TRUE,
@@ -628,6 +579,8 @@ $app->delete('/newscomments/:id', function ($id) use ($app) {
 	$comment->delete();
 	$app->render(200);
 });
+=======
+>>>>>>> f8723e01db25c6fd24fda51cf2aaaf5a55c45ab2
 //trabajos:
 
 $app->get('/trabajos', function () use ($app) {
@@ -719,9 +672,10 @@ $app->delete('/trabajos/:id', function ($id) use ($app) {
 
 
 
-//imagenes:
 
 
+
+<<<<<<< HEAD
 $app->get('/imagenes/:id', function ($id) use ($app) {
 	$db = $app->db->getConnection();
 	$imagen = Image::find($id);
@@ -729,6 +683,15 @@ $app->get('/imagenes/:id', function ($id) use ($app) {
 		$app->render(404,array(
 			'error' => TRUE,
             'msg'   => 'imagen not found',
+=======
+$app->get('/post/:id', function ($id) use ($app) {
+	$db = $app->db->getConnection();
+	$post = Post::find($id);
+	if(empty($post)){
+		$app->render(404,array(
+			'error' => TRUE,
+            'msg'   => 'post not found',
+>>>>>>> f8723e01db25c6fd24fda51cf2aaaf5a55c45ab2
         ));
 	}
 
@@ -736,6 +699,7 @@ $app->get('/imagenes/:id', function ($id) use ($app) {
 	$post->user = User::find($post->id_usuario);
 	*/
 
+<<<<<<< HEAD
 	$imagen->user = $db->table('usuarios')->select('id','name', 'email')->where('id', $imagen->IdUsuario)->get();
 
 	unset($imagen->id_usuario);
@@ -744,6 +708,16 @@ $app->get('/imagenes/:id', function ($id) use ($app) {
 });
 
 $app->post('/imagen', function () use ($app) {
+=======
+	$post->user = $db->table('usuarios')->select('id','name', 'email')->where('id', $post->id_usuario)->get();
+
+	unset($post->id_usuario);
+	
+	$app->render(200,array('data' => $post->toArray()));
+});
+
+$app->post('/post', function () use ($app) {
+>>>>>>> f8723e01db25c6fd24fda51cf2aaaf5a55c45ab2
 	$token = $app->request->headers->get('auth-token');
 
 	if(empty($token)){
@@ -773,6 +747,7 @@ $app->post('/imagen', function () use ($app) {
         ));
 	}
 	
+<<<<<<< HEAD
 	$imagen = new Image();
 	$imagen->title = $title;
     $imagen->IdUsuario = $user->id;
@@ -781,6 +756,16 @@ $app->post('/imagen', function () use ($app) {
 });
 
 $app->post('/imagenes/:id/comment', function ($id) use ($app) {
+=======
+	$post = new Post();
+	$post->title = $title;
+    $post->id_usuario = $user->id;
+    $post->save();
+    $app->render(200,array('data' => $post->toArray()));
+});
+
+$app->post('/post/:id/comment', function ($id) use ($app) {
+>>>>>>> f8723e01db25c6fd24fda51cf2aaaf5a55c45ab2
 	$token = $app->request->headers->get('auth-token');
 
 	if(empty($token)){
@@ -789,6 +774,7 @@ $app->post('/imagenes/:id/comment', function ($id) use ($app) {
             'msg'   => 'Not logged',
         ));
 	}
+<<<<<<< HEAD
 $app->get('/imagenes/:id/comment', function () use ($app) {
 	$db = $app->db->getConnection();
 	$comments = $db->table('comments')->select()->orderby('created_at','desc')->get();
@@ -796,6 +782,9 @@ $app->get('/imagenes/:id/comment', function () use ($app) {
 
 
 });
+=======
+
+>>>>>>> f8723e01db25c6fd24fda51cf2aaaf5a55c45ab2
 	$id_user_token = simple_decrypt($token, $app->enc_key);
 
 	$user = User::find($id_user_token);
@@ -807,11 +796,19 @@ $app->get('/imagenes/:id/comment', function () use ($app) {
 	}
 
 	$db = $app->db->getConnection();
+<<<<<<< HEAD
 	$imagen = Image::find($id);
 	if(empty($imagen)){
 		$app->render(404,array(
 			'error' => TRUE,
             'msg'   => 'imagen not found',
+=======
+	$post = Post::find($id);
+	if(empty($post)){
+		$app->render(404,array(
+			'error' => TRUE,
+            'msg'   => 'post not found',
+>>>>>>> f8723e01db25c6fd24fda51cf2aaaf5a55c45ab2
         ));
 	}
 
@@ -827,13 +824,21 @@ $app->get('/imagenes/:id/comment', function () use ($app) {
 	$comment = new Comment();
 	$comment->text = $text;
 	$comment->id_usuario = $user->id;
+<<<<<<< HEAD
 	$comment->id_imagen= $imagen->id;
+=======
+	$comment->id_post = $post->id;
+>>>>>>> f8723e01db25c6fd24fda51cf2aaaf5a55c45ab2
 	$comment->save();
 	
 	$app->render(200,array('data' => $comment->toArray()));
 });
 
+<<<<<<< HEAD
 $app->post('/imagenes/:id/multicomment', function ($id) use ($app) {
+=======
+$app->post('/post/:id/multicomment', function ($id) use ($app) {
+>>>>>>> f8723e01db25c6fd24fda51cf2aaaf5a55c45ab2
 	$token = $app->request->headers->get('auth-token');
 
 	if(empty($token)){
@@ -854,11 +859,19 @@ $app->post('/imagenes/:id/multicomment', function ($id) use ($app) {
 	}
 
 	$db = $app->db->getConnection();
+<<<<<<< HEAD
 	$iamgen = Image::find($id);
 	if(empty($iamgen)){
 		$app->render(404,array(
 			'error' => TRUE,
             'msg'   => 'imagen not found',
+=======
+	$post = Post::find($id);
+	if(empty($post)){
+		$app->render(404,array(
+			'error' => TRUE,
+            'msg'   => 'post not found',
+>>>>>>> f8723e01db25c6fd24fda51cf2aaaf5a55c45ab2
         ));
 	}
 
@@ -879,7 +892,11 @@ $app->post('/imagenes/:id/multicomment', function ($id) use ($app) {
 		$comment = new Comment();
 		$comment->text = $text;
 		$comment->id_usuario = $user->id;
+<<<<<<< HEAD
 		$comment->id_imagen= $imagen->id;
+=======
+		$comment->id_post = $post->id;
+>>>>>>> f8723e01db25c6fd24fda51cf2aaaf5a55c45ab2
 		$comment->save();
 		$created[] = $comment->toArray();
 	}
@@ -908,6 +925,7 @@ $app->get('/profile', function () use ($app) {
 	}
 
 	$db = $app->db->getConnection();
+<<<<<<< HEAD
 	$imagenes = $db->table('imagenes')->select()->where('IdUsuario', $user->id)->get();
 
 	foreach ($imagenes as $key => $imagen) {
@@ -919,6 +937,19 @@ $app->get('/profile', function () use ($app) {
 	}
 	
 	$app->render(200,array('data' => $imagenes));
+=======
+	$posts = $db->table('posts')->select()->where('id_usuario', $user->id)->get();
+
+	foreach ($posts as $key => $post) {
+		$comments = $db->table('comments')->select()->where('id_post', $post->id)->get();
+		foreach ($comments as $keyc => $comment) {
+			$comments[$keyc]->user = User::find($comment->id_usuario);
+		}
+		$posts[$key]->comments = $comments;
+	}
+	
+	$app->render(200,array('data' => $posts));
+>>>>>>> f8723e01db25c6fd24fda51cf2aaaf5a55c45ab2
 });
 
 $app->post('/findcomments', function () use ($app) {
@@ -947,6 +978,7 @@ $app->post('/findcomments', function () use ($app) {
 	$app->render(200,array('data' => $comments));
 });
 
+<<<<<<< HEAD
 
 
 
@@ -1191,5 +1223,7 @@ $app->post('/enviarchat', function () use ($app) {
 
 
 
+=======
+>>>>>>> f8723e01db25c6fd24fda51cf2aaaf5a55c45ab2
 $app->run();
 ?>
