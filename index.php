@@ -61,6 +61,14 @@ $app->get('/', function () use ($app) {
 $app->post('/login', function () use ($app) {
 	$input = $app->request->getBody();
 
+	$username = $input['username'];
+	if(empty($username)){
+		$app->render(500,array(
+			'error' => TRUE,
+            'msg'   => 'username is required',
+        ));
+	}
+
 	$email = $input['email'];
 	if(empty($email)){
 		$app->render(500,array(
@@ -77,7 +85,7 @@ $app->post('/login', function () use ($app) {
 	}
 
 	$db = $app->db->getConnection();
-	$user =$db->table('usuarios')->select()->where('email', $email)->first();
+	$user =$db->table('usuarios')->select()->where('username', $username)->first();
     if(empty($user)){
         $app->render(500,array(
             'error' => TRUE,
@@ -137,6 +145,16 @@ $app->get('/usuarios', function () use ($app) {
 $app->post('/usuarios', function () use ($app) {
 	$input = $app->request->getBody();
 
+
+	$username = $input['username'];
+
+ 	if(empty($username)){
+		$app->render(500,array(
+			'error' => TRUE,
+            'msg'   => 'username is required',
+        ));
+	}
+
 	$name = $input['name'];
 
  	if(empty($name)){
@@ -163,6 +181,7 @@ $app->post('/usuarios', function () use ($app) {
     $user = new User();
     $user->name = $name;
     $user->password = $password;
+     $user->username = $username;
    $user->email = $email;
      
     $user->save();
@@ -186,6 +205,15 @@ $app->put('/usuarios/:id', function ($id) use ($app) {
 			'error' => TRUE,
             'msg'   => 'password is required',
         ));
+	}
+
+	$username = $input['username'];
+	if(empty($username)){
+		$app->render(500,array(
+			'error' => TRUE,
+            'msg'   => 'username is required',
+        ));
+
 	}
 $email = $input['email'];
 	if(empty($email)){
@@ -221,6 +249,7 @@ $country = $input['country'];
 	}
     $user->name = $name;
     $user->password = $password;
+        $user->username = $username;
     $user->email = $email;
     $user->city = $city;
     $user->country = $country;
@@ -238,7 +267,7 @@ $app->get('/usuarios/:id', function ($id) use ($app) {
         ));
 	}
 	unset($user->password);
- 	unset($user->email);
+	unset($user->username);
  
  	$user->imagenes = $db->table('imagenes')->select('Titulo')->where('IdUsuario', $user->id)->get();
 	$app->render(200,array('data' => $user->toArray()));
@@ -270,7 +299,7 @@ $app->get('/post/:id', function ($id) use ($app) {
  	$post->user = User::find($post->id_usuario);
  	*/
  
- 	$post->user = $db->table('usuarios')->select('id','name', 'email')->where('id', $post->id_usuario)->get();
+ 	$post->user = $db->table('usuarios')->select('id','name', 'email','username')->where('id', $post->id_usuario)->get();
  
  	unset($post->id_usuario);
  	
@@ -736,7 +765,7 @@ $app->get('/imagenes/:id', function ($id) use ($app) {
 	$post->user = User::find($post->id_usuario);
 	*/
 
-	$imagen->user = $db->table('usuarios')->select('id','name', 'email')->where('id', $imagen->IdUsuario)->get();
+	$imagen->user = $db->table('usuarios')->select('id','name', 'email','username')->where('id', $imagen->IdUsuario)->get();
 
 	unset($imagen->id_usuario);
 	
