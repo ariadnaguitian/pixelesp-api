@@ -165,10 +165,18 @@ $app->post('/usuarios', function () use ($app) {
         ));
 	}
 	$email = $input['email'];
+
+
 	if(empty($email)){
 		$app->render(500,array(
 			'error' => TRUE,
             'msg'   => 'email is required',
+        ));
+	}
+	if($email = 'email '){
+		$app->render(500,array(
+			'error' => TRUE,
+            'msg'   => 'email already exists',
         ));
 	}
 	
