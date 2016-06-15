@@ -78,7 +78,7 @@ $app->post('/login', function () use ($app) {
         ));
 	}
 
-		$userlevel = $input['userlevel'];
+	
 
 
 	$db = $app->db->getConnection();
@@ -94,6 +94,13 @@ $app->post('/login', function () use ($app) {
         $app->render(500,array(
             'error' => TRUE,
             'msg'   => 'password dont match',
+        ));
+    }
+
+      if($user->userlevel != 1){
+        $app->render(500,array(
+            'error' => TRUE,
+            'msg'   => 'Acceso denegado',
         ));
     }
 	$token = simple_encrypt($user->id, $app->enc_key);
