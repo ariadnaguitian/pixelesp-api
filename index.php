@@ -230,13 +230,27 @@ $app->post('/usuarios', function () use ($app) {
             'msg'   => 'email is required',
         ));
 	}
+
+
 	
     $user = new User();
     $user->name = $name;
     $user->password = $password;
      $user->username = $username;
    $user->email = $email;
-     
+
+     if($user->email == $email){
+        $app->render(500,array(
+            'error' => TRUE,
+            'msg'   => 'email ya registrado',
+        ));
+    } 
+     if($user->username == $username){
+        $app->render(500,array(
+            'error' => TRUE,
+            'msg'   => 'username ya registrado',
+        ));
+    } 
     $user->save();
     $app->render(200,array('data' => $user->toArray()));
 });
