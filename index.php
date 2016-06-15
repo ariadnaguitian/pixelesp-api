@@ -78,9 +78,11 @@ $app->post('/login', function () use ($app) {
         ));
 	}
 
+		$userlevel = $input['userlevel'];
+
 
 	$db = $app->db->getConnection();
-	$user =$db->table('usuarios')->select()->where('username', $username)->where('userlevel', 1)->first();
+	$user =$db->table('usuarios')->select()->where('username', $username)->where($userlevel, 1)->first();
     if(empty($user)){
         $app->render(500,array(
             'error' => TRUE,
