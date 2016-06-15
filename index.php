@@ -78,8 +78,9 @@ $app->post('/login', function () use ($app) {
         ));
 	}
 
+
 	$db = $app->db->getConnection();
-	$user =$db->table('usuarios')->select()->where('username', $username)->first();
+	$user =$db->table('usuarios')->select()->where('username', $username)->where('userlevel', 1)->first();
     if(empty($user)){
         $app->render(500,array(
             'error' => TRUE,
@@ -171,12 +172,6 @@ $app->post('/usuarios', function () use ($app) {
 		$app->render(500,array(
 			'error' => TRUE,
             'msg'   => 'email is required',
-        ));
-	}
-	if('email' == $email ){
-		$app->render(500,array(
-			'error' => TRUE,
-            'msg'   => 'email already exists',
         ));
 	}
 	
