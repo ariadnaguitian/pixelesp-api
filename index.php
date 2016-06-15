@@ -69,13 +69,7 @@ $app->post('/login', function () use ($app) {
         ));
 	}
 
-	$email = $input['email'];
-	if(empty($email)){
-		$app->render(500,array(
-			'error' => TRUE,
-            'msg'   => 'email is required',
-        ));
-	}
+	
 	$password = $input['password'];
 	if(empty($password)){
 		$app->render(500,array(
