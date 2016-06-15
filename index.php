@@ -173,7 +173,7 @@ $app->post('/usuarios', function () use ($app) {
             'msg'   => 'email is required',
         ));
 	}
-	if($email == 'email'){
+	if('email' == $email ){
 		$app->render(500,array(
 			'error' => TRUE,
             'msg'   => 'email already exists',
