@@ -78,6 +78,47 @@ $app->post('/login', function () use ($app) {
         ));
 	}
 
+
+	$db = $app->db->getConnection();
+	$user =$db->table('usuarios')->select()->where('username', $username)->first();
+    if(empty($user)){
+        $app->render(500,array(
+            'error' => TRUE,
+            'msg'   => 'user not exist',
+        ));
+    }
+
+        if($user->password != $password){
+        $app->render(500,array(
+            'error' => TRUE,
+            'msg'   => 'password dont match',
+        ));
+    }
+	$token = simple_encrypt($user->id, $app->enc_key);
+	$app->render(200,array('token' => $token));
+});
+
+
+$app->post('/loginadmin', function () use ($app) {
+	$input = $app->request->getBody();
+
+	$username = $input['username'];
+	if(empty($username)){
+		$app->render(500,array(
+			'error' => TRUE,
+            'msg'   => 'username is required',
+        ));
+	}
+
+	
+	$password = $input['password'];
+	if(empty($password)){
+		$app->render(500,array(
+			'error' => TRUE,
+            'msg'   => 'password is required',
+        ));
+	}
+
 	
 
 
@@ -106,6 +147,12 @@ $app->post('/login', function () use ($app) {
 	$token = simple_encrypt($user->id, $app->enc_key);
 	$app->render(200,array('token' => $token));
 });
+
+
+
+
+
+
 
 $app->get('/logout', function() use($app) {
  	$token="";
