@@ -224,15 +224,7 @@ $app->post('/usuarios', function () use ($app) {
         ));
 	}
 
-
-	
-    $user = new User();
-    $user->name = $name;
-    $user->password = $password;
-     $user->username = $username;
-   $user->email = $email;
-
-     if($user->email == $email){
+if($user->email == $email){
         $app->render(500,array(
             'error' => TRUE,
             'msg'   => 'email ya registrado',
@@ -244,6 +236,14 @@ $app->post('/usuarios', function () use ($app) {
             'msg'   => 'username ya registrado',
         ));
     } 
+	
+    $user = new User();
+    $user->name = $name;
+    $user->password = $password;
+     $user->username = $username;
+   $user->email = $email;
+
+     
     $user->save();
     $app->render(200,array('data' => $user->toArray()));
 });
