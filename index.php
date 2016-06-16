@@ -224,18 +224,6 @@ $app->post('/usuarios', function () use ($app) {
         ));
 	}
 
-if($user->email == $email){
-        $app->render(500,array(
-            'error' => TRUE,
-            'msg'   => 'email ya registrado',
-        ));
-    } 
-     if($user->username == $username){
-        $app->render(500,array(
-            'error' => TRUE,
-            'msg'   => 'username ya registrado',
-        ));
-    } 
 	
     $user = new User();
     $user->name = $name;
