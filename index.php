@@ -8,6 +8,7 @@ require 'vendor/autoload.php';
 require 'Models/User.php';
 require 'Models/Imagen.php';
 require 'Models/Noticia.php';
+require 'Models/Favoritos.php';
 require 'Models/Post.php';
 require 'Models/comment.php';
 require 'Models/newscomment.php';
@@ -65,7 +66,7 @@ $app->post('/login', function () use ($app) {
 	if(empty($username)){
 		$app->render(500,array(
 			'error' => TRUE,
-            'msg'   => 'username is required',
+            'msg'   => 'Se requiere nombre de usuario',
         ));
 	}
 
@@ -74,7 +75,7 @@ $app->post('/login', function () use ($app) {
 	if(empty($password)){
 		$app->render(500,array(
 			'error' => TRUE,
-            'msg'   => 'password is required',
+            'msg'   => 'Se requiere contraseña',
         ));
 	}
 
@@ -84,14 +85,14 @@ $app->post('/login', function () use ($app) {
     if(empty($user)){
         $app->render(500,array(
             'error' => TRUE,
-            'msg'   => 'user not exist',
+            'msg'   => 'El usuario no existe',
         ));
     }
 
         if($user->password != $password){
         $app->render(500,array(
             'error' => TRUE,
-            'msg'   => 'password dont match',
+            'msg'   => 'La contraseña no coincide',
         ));
     }
 	$token = simple_encrypt($user->id, $app->enc_key);
@@ -106,7 +107,7 @@ $app->post('/loginadmin', function () use ($app) {
 	if(empty($username)){
 		$app->render(500,array(
 			'error' => TRUE,
-            'msg'   => 'username is required',
+            'msg'   => 'Se requiere nombre de usuario',
         ));
 	}
 
@@ -115,7 +116,7 @@ $app->post('/loginadmin', function () use ($app) {
 	if(empty($password)){
 		$app->render(500,array(
 			'error' => TRUE,
-            'msg'   => 'password is required',
+            'msg'   => 'Se requiere contraseña',
         ));
 	}
 
@@ -127,14 +128,14 @@ $app->post('/loginadmin', function () use ($app) {
     if(empty($user)){
         $app->render(500,array(
             'error' => TRUE,
-            'msg'   => 'user not exist',
+            'msg'   => 'El usuario no existe',
         ));
     }
 
         if($user->password != $password){
         $app->render(500,array(
             'error' => TRUE,
-            'msg'   => 'password dont match',
+            'msg'   => 'La contraseña no coincide',
         ));
     }
 
@@ -164,7 +165,7 @@ $app->get('/me', function () use ($app) {
 	if(empty($token)){
 		$app->render(500,array(
 			'error' => TRUE,
-            'msg'   => 'Not logged1',
+            'msg'   => 'No has iniciado sesión 1',
         ));
 	}
 	
@@ -175,7 +176,7 @@ $app->get('/me', function () use ($app) {
 	if(empty($user)){
 		$app->render(500,array(
 			'error' => TRUE,
-            'msg'   => 'Not logged2',
+            'msg'   => 'No has iniciado sesión 2',
         ));
 	}
 	$app->render(200,array('data' => $user->toArray()));
@@ -202,7 +203,7 @@ $app->post('/usuarios', function () use ($app) {
  	if(empty($username)){
 		$app->render(500,array(
 			'error' => TRUE,
-            'msg'   => 'username is required',
+            'msg'   => 'Se requiere nombre de usuario',
         ));
 	}
 
@@ -211,7 +212,7 @@ $app->post('/usuarios', function () use ($app) {
  	if(empty($name)){
 		$app->render(500,array(
 			'error' => TRUE,
-            'msg'   => 'name is required',
+            'msg'   => 'Se requiere nombre',
         ));
 	}
 
@@ -221,7 +222,7 @@ $app->post('/usuarios', function () use ($app) {
 	if(empty($password)){
 		$app->render(500,array(
 			'error' => TRUE,
-            'msg'   => 'password is required',
+            'msg'   => 'Se requiere contraseña',
         ));
 	}
 	$email = $input['email'];
@@ -230,7 +231,7 @@ $app->post('/usuarios', function () use ($app) {
 	if(empty($email)){
 		$app->render(500,array(
 			'error' => TRUE,
-            'msg'   => 'email is required',
+            'msg'   => 'Se requiere email',
         ));
 	}
 
@@ -255,14 +256,14 @@ $app->put('/usuarios/:id', function ($id) use ($app) {
 	if(empty($name)){
 		$app->render(500,array(
 			'error' => TRUE,
-            'msg'   => 'name is required',
+            'msg'   => 'Se requiere nombre',
         ));
 	}
 	$password = $input['password'];
 	if(empty($password)){
 		$app->render(500,array(
 			'error' => TRUE,
-            'msg'   => 'password is required',
+            'msg'   => 'Se requiere contraseña',
         ));
 	}
 
@@ -270,7 +271,7 @@ $app->put('/usuarios/:id', function ($id) use ($app) {
 	if(empty($username)){
 		$app->render(500,array(
 			'error' => TRUE,
-            'msg'   => 'username is required',
+            'msg'   => 'Se requiere nombre de usuario',
         ));
 
 	}
@@ -278,14 +279,14 @@ $email = $input['email'];
 	if(empty($email)){
 		$app->render(500,array(
 			'error' => TRUE,
-            'msg'   => 'email is required',
+            'msg'   => 'Se requiere email',
         ));
 	}
 	$city = $input['city'];
 	if(empty($city)){
 		$app->render(500,array(
 			'error' => TRUE,
-            'msg'   => 'city is required',
+            'msg'   => 'Se requiere ciudad',
         ));
 	}
 
@@ -293,7 +294,7 @@ $country = $input['country'];
 	if(empty($country)){
 		$app->render(500,array(
 			'error' => TRUE,
-            'msg'   => 'country is required',
+            'msg'   => 'Se requiere país',
         ));
 	}
 
@@ -303,7 +304,7 @@ $country = $input['country'];
 	if(empty($user)){
 		$app->render(404,array(
 			'error' => TRUE,
-            'msg'   => 'user not found',
+            'msg'   => 'Usuario no encontrado',
         ));
 	}
     $user->name = $name;
@@ -322,7 +323,7 @@ $app->get('/usuarios/:id', function ($id) use ($app) {
 	if(empty($user)){
 		$app->render(404,array(
 			'error' => TRUE,
-            'msg'   => 'user not found',
+            'msg'   => 'Usuario no encontrado',
         ));
 	}
 	unset($user->password);
@@ -336,7 +337,7 @@ $app->delete('/usuarios/:id', function ($id) use ($app) {
 	if(empty($user)){
 		$app->render(404,array(
 			'error' => TRUE,
-            'msg'   => 'user not found',
+            'msg'   => 'Usuario no encontrado',
         ));
 	}
 	$user->delete();
@@ -395,14 +396,14 @@ $app->post('/noticias', function () use ($app) {
  	if(empty($Titulo)){
 		$app->render(500,array(
 			'error' => TRUE,
-            'msg'   => 'Titulo is required',
+            'msg'   => 'Se requiere titulo',
         ));
 	}
 	$Descripcion = $input['Descripcion'];
 	if(empty($Descripcion)){
 		$app->render(500,array(
 			'error' => TRUE,
-            'msg'   => 'Descripcion is required',
+            'msg'   => 'Se requiere descripción',
         ));
 	}
 		
@@ -423,14 +424,14 @@ $app->put('/noticias/:id', function ($id) use ($app) {
 	if(empty($Titulo)){
 		$app->render(500,array(
 			'error' => TRUE,
-            'msg'   => 'Titulo is required',
+            'msg'   => 'Se requiere titulo',
         ));
 	}
 	$Descripcion = $input['Descripcion'];
 	if(empty($Descripcion)){
 		$app->render(500,array(
 			'error' => TRUE,
-            'msg'   => 'Descripcion is required',
+            'msg'   => 'Se requiere descripción',
         ));
 	}
 
@@ -438,7 +439,7 @@ $app->put('/noticias/:id', function ($id) use ($app) {
 	if(empty($noticia)){
 		$app->render(404,array(
 			'error' => TRUE,
-            'msg'   => 'noticia not found',
+            'msg'   => 'Noticia no encontrada',
         ));
 	}
     $noticia->Titulo = $Titulo;
@@ -451,7 +452,7 @@ $app->get('/noticias/:id', function ($id) use ($app) {
 	if(empty($noticia)){
 		$app->render(404,array(
 			'error' => TRUE,
-            'msg'   => 'noticia not found',
+            'msg'   => 'Noticia no encontrada',
         ));
 	}
 	$app->render(200,array('data' => $noticia->toArray()));
@@ -461,7 +462,7 @@ $app->delete('/noticias/:id', function ($id) use ($app) {
 	if(empty($noticia)){
 		$app->render(404,array(
 			'error' => TRUE,
-            'msg'   => 'noticia not found',
+            'msg'   => 'Noticia no encontrada',
         ));
 	}
 	$noticia->delete();
@@ -489,14 +490,14 @@ $app->post('/imagenes', function () use ($app) {
  	if(empty($Titulo)){
 		$app->render(500,array(
 			'error' => TRUE,
-            'msg'   => 'Titulo is required',
+            'msg'   => 'Se requiere título',
         ));
 	}
 	$Descripcion = $input['Descripcion'];
 	if(empty($Descripcion)){
 		$app->render(500,array(
 			'error' => TRUE,
-            'msg'   => 'Descripcion is required',
+            'msg'   => 'Se requiere descripción',
         ));
 	}
 		
@@ -518,14 +519,14 @@ $app->put('/imagenes/:id', function ($id) use ($app) {
 	if(empty($Titulo)){
 		$app->render(500,array(
 			'error' => TRUE,
-            'msg'   => 'Titulo is required',
+            'msg'   => 'Se requiere título',
         ));
 	}
 	$Descripcion = $input['Descripcion'];
 	if(empty($Descripcion)){
 		$app->render(500,array(
 			'error' => TRUE,
-            'msg'   => 'Descripcion is required',
+            'msg'   => 'Se requiere descripción',
         ));
 	}
 
@@ -533,7 +534,7 @@ $app->put('/imagenes/:id', function ($id) use ($app) {
 	if(empty($imagen)){
 		$app->render(404,array(
 			'error' => TRUE,
-            'msg'   => 'imagen not found',
+            'msg'   => 'imagen no encontrada',
         ));
 	}
     $imagen->Titulo = $Titulo;
@@ -546,7 +547,7 @@ $app->get('/imagenes/:id', function ($id) use ($app) {
 	if(empty($imagen)){
 		$app->render(404,array(
 			'error' => TRUE,
-            'msg'   => 'imagen not found',
+            'msg'   => 'imagen no encontrada',
         ));
 	}
 	$app->render(200,array('data' => $imagen->toArray()));
@@ -556,7 +557,7 @@ $app->delete('/imagenes/:id', function ($id) use ($app) {
 	if(empty($imagen)){
 		$app->render(404,array(
 			'error' => TRUE,
-            'msg'   => 'imagen not found',
+            'msg'   => 'imagen no encontrada',
         ));
 	}
 	$imagen->delete();
@@ -588,7 +589,7 @@ $app->put('/comments/:id', function ($id) use ($app) {
 	if(empty($text)){
 		$app->render(500,array(
 			'error' => TRUE,
-            'msg'   => 'text is required',
+            'msg'   => 'se requiere texto',
         ));
 	}
 
@@ -596,7 +597,7 @@ $app->put('/comments/:id', function ($id) use ($app) {
 	if(empty($comment)){
 		$app->render(404,array(
 			'error' => TRUE,
-            'msg'   => 'comment not found',
+            'msg'   => 'comentario no encontrado',
         ));
 	}
     $comment->text = $text;
@@ -608,7 +609,7 @@ $app->get('/comments/:id', function ($id) use ($app) {
 	if(empty($comment)){
 		$app->render(404,array(
 			'error' => TRUE,
-            'msg'   => 'comment not found',
+            'msg'   => 'comentario no encontrado',
         ));
 	}
 	$app->render(200,array('data' => $comment->toArray()));
@@ -618,7 +619,7 @@ $app->delete('/comments/:id', function ($id) use ($app) {
 	if(empty($comment)){
 		$app->render(404,array(
 			'error' => TRUE,
-            'msg'   => 'comment not found',
+            'msg'   => 'comentario no encontrado',
         ));
 	}
 	$comment->delete();
@@ -837,7 +838,7 @@ $app->post('/imagen', function () use ($app) {
 	if(empty($token)){
 		$app->render(500,array(
 			'error' => TRUE,
-            'msg'   => 'Not logged',
+            'msg'   => 'No has iniciado sesión ',
         ));
 	}
 
@@ -847,7 +848,7 @@ $app->post('/imagen', function () use ($app) {
 	if(empty($user)){
 		$app->render(500,array(
 			'error' => TRUE,
-            'msg'   => 'Not logged',
+            'msg'   => 'No has iniciado sesión ',
         ));
 	}
 
@@ -874,7 +875,7 @@ $app->post('/imagenes/:id/comment', function ($id) use ($app) {
 	if(empty($token)){
 		$app->render(500,array(
 			'error' => TRUE,
-            'msg'   => 'Not logged',
+            'msg'   => 'No has iniciado sesión ',
         ));
 	}
 $app->get('/imagenes/:id/comment', function () use ($app) {
@@ -890,7 +891,7 @@ $app->get('/imagenes/:id/comment', function () use ($app) {
 	if(empty($user)){
 		$app->render(500,array(
 			'error' => TRUE,
-            'msg'   => 'Not logged',
+            'msg'   => 'No has iniciado sesión ',
         ));
 	}
 
@@ -927,7 +928,7 @@ $app->post('/imagenes/:id/multicomment', function ($id) use ($app) {
 	if(empty($token)){
 		$app->render(500,array(
 			'error' => TRUE,
-            'msg'   => 'Not logged',
+            'msg'   => 'No has iniciado sesión ',
         ));
 	}
 
@@ -937,7 +938,7 @@ $app->post('/imagenes/:id/multicomment', function ($id) use ($app) {
 	if(empty($user)){
 		$app->render(500,array(
 			'error' => TRUE,
-            'msg'   => 'Not logged',
+            'msg'   => 'No has iniciado sesión ',
         ));
 	}
 
@@ -981,7 +982,7 @@ $app->get('/profile', function () use ($app) {
 	if(empty($token)){
 		$app->render(500,array(
 			'error' => TRUE,
-            'msg'   => 'Not logged',
+            'msg'   => 'No has iniciado sesión ',
         ));
 	}
 
@@ -991,7 +992,7 @@ $app->get('/profile', function () use ($app) {
 	if(empty($user)){
 		$app->render(500,array(
 			'error' => TRUE,
-            'msg'   => 'Not logged',
+            'msg'   => 'No has iniciado sesión ',
         ));
 	}
 
@@ -1055,7 +1056,7 @@ $app->post('/favoritos', function () use ($app) {
 	if(empty($token)){
 		$app->render(500,array(
 			'error' => TRUE,
-            'msg'   => 'Not logged',
+            'msg'   => 'No has iniciado sesión ',
         ));
 	}
 	$id_user_token = simple_decrypt($token, $app->enc_key);
@@ -1063,7 +1064,7 @@ $app->post('/favoritos', function () use ($app) {
 	if(empty($user)){
 		$app->render(500,array(
 			'error' => TRUE,
-            'msg'   => 'Not logged',
+            'msg'   => 'No has iniciado sesión ',
         ));
 	}
 	
@@ -1089,7 +1090,7 @@ $app->get('/misfavoritos', function () use ($app) {
 	if(empty($token)){
 		$app->render(500,array(
 			'error' => TRUE,
-            'msg'   => 'Not logged 12',
+            'msg'   => 'No has iniciado sesión  12',
         ));
 	}
 	$id_user_token = simple_decrypt($token, $app->enc_key);
@@ -1097,7 +1098,7 @@ $app->get('/misfavoritos', function () use ($app) {
 	if(empty($user)){
 		$app->render(500,array(
 			'error' => TRUE,
-            'msg'   => 'Not logged 15',
+            'msg'   => 'No has iniciado sesión  15',
         ));
 	}
 	
@@ -1118,12 +1119,12 @@ $app->get('/misfavoritos', function () use ($app) {
 	$app->render(200,array('data' => $favoritos));
 });
 // ver favorito y borrar 
-$app->delete('/delfavoritos', function () use ($app) {
+$app->delete('/delfavoritosimg', function () use ($app) {
   $token = $app->request->headers->get('auth-token');
 	if(empty($token)){
 		$app->render(500,array(
 			'error' => TRUE,
-            'msg'   => 'Not logged 13',
+            'msg'   => 'No has iniciado sesión  13',
         ));
 	}
 	$id_user_token = simple_decrypt($token, $app->enc_key);
@@ -1131,7 +1132,7 @@ $app->delete('/delfavoritos', function () use ($app) {
 	if(empty($user)){
 		$app->render(500,array(
 			'error' => TRUE,
-            'msg'   => 'Not logged 15',
+            'msg'   => 'No has iniciado sesión  15',
         ));
 	}
 	
@@ -1170,7 +1171,7 @@ $app->get('/misfavoritoslist', function () use ($app) {
 	if(empty($token)){
 		$app->render(500,array(
 			'error' => TRUE,
-            'msg'   => 'Not logged',
+            'msg'   => 'No has iniciado sesión ',
         ));
 	}
 	$id_user_token = simple_decrypt($token, $app->enc_key);
@@ -1178,7 +1179,7 @@ $app->get('/misfavoritoslist', function () use ($app) {
 	if(empty($user)){
 		$app->render(500,array(
 			'error' => TRUE,
-            'msg'   => 'Not logged',
+            'msg'   => 'No has iniciado sesión ',
         ));
 	}
 	
@@ -1215,7 +1216,7 @@ $app->get('/chat/:id', function ($idr) use ($app) {
 	if(empty($token)){
 		$app->render(500,array(
 			'error' => TRUE,
-            'msg'   => 'Not logged',
+            'msg'   => 'No has iniciado sesión ',
         ));
 	}
 	$id_user_token = simple_decrypt($token, $app->enc_key);
@@ -1223,7 +1224,7 @@ $app->get('/chat/:id', function ($idr) use ($app) {
 	if(empty($user)){
 		$app->render(500,array(
 			'error' => TRUE,
-            'msg'   => 'Not logged',
+            'msg'   => 'No has iniciado sesión ',
         ));
 	}
 	$db = $app->db->getConnection();
@@ -1240,7 +1241,7 @@ $app->post('/enviarchat', function () use ($app) {
 	if(empty($token)){
 		$app->render(500,array(
 			'error' => TRUE,
-            'msg'   => 'Not logged',
+            'msg'   => 'No has iniciado sesión ',
         ));
 	}
 	$id_user_token = simple_decrypt($token, $app->enc_key);
@@ -1248,7 +1249,7 @@ $app->post('/enviarchat', function () use ($app) {
 	if(empty($user)){
 		$app->render(500,array(
 			'error' => TRUE,
-            'msg'   => 'Not logged',
+            'msg'   => 'No has iniciado sesión ',
         ));
 	}
 	
@@ -1275,6 +1276,170 @@ $app->post('/enviarchat', function () use ($app) {
     $chat->iduseremisor = $user->id;
     $chat->save();
     $app->render(200,array('data' => $chat->toArray()));
+});
+
+
+
+
+//Conexion con la tabla favoritos
+$app->get('/favimg', function () use ($app) {
+	$db = $app->db->getConnection();
+	$fav = $db->table('imgfavoritos')->select('id', 'idimagen', 'idusuario')->get();
+	$app->render(200,array('data' => $fav));
+});
+
+
+// agregar favoritos
+$app->post('/favoritosimg', function () use ($app) {
+  $token = $app->request->headers->get('auth-token');
+	if(empty($token)){
+		$app->render(500,array(
+			'error' => TRUE,
+            'msg'   => 'No has iniciado sesión ',
+        ));
+	}
+	$id_user_token = simple_decrypt($token, $app->enc_key);
+	$user = User::find($id_user_token);
+	if(empty($user)){
+		$app->render(500,array(
+			'error' => TRUE,
+            'msg'   => 'No has iniciado sesión ',
+        ));
+	}
+	
+  $input = $app->request->getBody();
+  
+  $idimagen = $input['idimagen'];
+	if(empty($idimagen)){
+		$app->render(500,array(
+			'error' => TRUE,
+            'msg'   => 'Id anuncio is required',
+        ));
+	}
+	
+	$favoritoimg = new Favorito();
+    $favoritoimg->idimagen = $idimagen;
+    $favoritoimg->idusuario = $user->id;
+    $favoritoimg->save();
+    $app->render(200,array('data' => $favoritoimg->toArray()));
+});
+// Traer favorito especifico para borrar
+$app->get('/misfavoritosimg', function () use ($app) {
+  $token = $app->request->headers->get('auth-token');
+	if(empty($token)){
+		$app->render(500,array(
+			'error' => TRUE,
+            'msg'   => 'No has iniciado sesión  12',
+        ));
+	}
+	$id_user_token = simple_decrypt($token, $app->enc_key);
+	$user = User::find($id_user_token);
+	if(empty($user)){
+		$app->render(500,array(
+			'error' => TRUE,
+            'msg'   => 'No has iniciado sesión  15',
+        ));
+	}
+	
+	$input = $app->request->getBody();
+  
+	  $idimagen = $input['idimagen'];
+		if(empty($idimagen)){
+			$app->render(500,array(
+				'error' => TRUE,
+				'msg'   => 'Id imagen is required',
+			));
+		}
+	
+	$db = $app->db->getConnection();
+	
+	$favoritosimg = $db->table('imgfavoritos')->select('id', 'idusuario', 'idimagen')->where('idusuario', $user->id)->where('idimagen', $idimagen)->get();
+	
+	$app->render(200,array('data' => $favoritosimg));
+});
+// ver favorito y borrar 
+$app->delete('/delfavoritos', function () use ($app) {
+  $token = $app->request->headers->get('auth-token');
+	if(empty($token)){
+		$app->render(500,array(
+			'error' => TRUE,
+            'msg'   => 'No has iniciado sesión  13',
+        ));
+	}
+	$id_user_token = simple_decrypt($token, $app->enc_key);
+	$user = User::find($id_user_token);
+	if(empty($user)){
+		$app->render(500,array(
+			'error' => TRUE,
+            'msg'   => 'No has iniciado sesión  15',
+        ));
+	}
+	
+	
+	$input = $app->request->getBody();
+  
+	  $idimagen = $input['idimagen'];
+		if(empty($idimagen)){
+			$app->render(500,array(
+				'error' => TRUE,
+				'msg'   => 'Id imagen is required',
+			));
+		}
+	
+	$db = $app->db->getConnection();
+	
+
+    $favoritosimg = $db->table('imgfavoritos')->select('id', 'idusuario', 'idimagen')->where('idusuario', $user->id)->where('idimagen', $idimagen)->get();
+
+
+	
+	$idfav = $favoritosimg->id;
+	
+	$favoritoimg = Favorito::find($idfav);
+	if(empty($favoritoimg)){
+		$app->render(404,array(
+			'error' => TRUE,
+            'msg'   => 'favorito not found 4',
+        ));
+	}
+	$favoritoimg->delete();
+	$app->render(200);
+		
+});
+// listar mis favoritos
+$app->get('/misfavoritosimglist', function () use ($app) {
+	
+	$token = $app->request->headers->get('auth-token');
+	if(empty($token)){
+		$app->render(500,array(
+			'error' => TRUE,
+            'msg'   => 'No has iniciado sesión ',
+        ));
+	}
+	$id_user_token = simple_decrypt($token, $app->enc_key);
+	$user = User::find($id_user_token);
+	if(empty($user)){
+		$app->render(500,array(
+			'error' => TRUE,
+            'msg'   => 'No has iniciado sesión ',
+        ));
+	}
+	
+	
+	$db = $app->db->getConnection();
+
+
+	
+	$favoritosimg = $db->table('imgfavoritos')->select('id', 'idusuario', 'idimagen')->where('idusuario', $user->id)->get();
+	foreach ($favoritosimg as $key => $favoritosimg) {
+
+
+		$imagenes = $db->table('imagenes')->select('id', 'IdUsuario', 'Titulo', 'Descripcion', 'Imagen', 'Previa')->where('id', $favoritosimg->idimagen)->get();
+		
+		$favoritosimg[$key]->imagenes = $imagenes;
+	}
+		
+	$app->render(200,array('data' => $favoritosimg));
 });
 
 
