@@ -81,7 +81,7 @@ $app->post('/login', function () use ($app) {
 
 
 	$db = $app->db->getConnection();
-	$user =$db->table('usuarios')->select()->where('password', $password)->first();
+	$user =$db->table('usuarios')->select()->where('username', $username)->first();
     if(empty($user)){
         $app->render(500,array(
             'error' => TRUE,
