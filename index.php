@@ -1277,7 +1277,7 @@ $app->post('/enviarchat', function () use ($app) {
     $chat->iduseremisor = $user->id;
     $chat->save();
     $app->render(200,array('data' => $chat->toArray()));
-
+});
 
 
 
