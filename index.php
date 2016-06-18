@@ -374,7 +374,7 @@ $app->get('/noticias', function () use ($app) {
 	->orderby('created_at','desc')
 	->get();
 	foreach ($images as $key => $value) {
-		$newscomment =  newscomments::where('id_noticia', '=', $value->id)
+		$newscomment = newscomments::where('id_noticia', '=', $value->id)
 		->select('newscomments.*','usuarios.name')
 		->leftjoin('usuarios', 'usuarios.id', '=', 'newscomments.idusuario')
 		
