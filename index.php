@@ -698,7 +698,7 @@ $app->put('/newscomments/:id', function ($id) use ($app) {
     $app->render(200,array('data' => $newscomment->toArray()));
 });
 $app->get('/newscomments/:id', function ($id) use ($app) {
-	$newscomment = NewsComments::find($id);
+	$newscomment = newscomments::find($id);
 	if(empty($newscomment)){
 		$app->render(404,array(
 			'error' => TRUE,
@@ -708,7 +708,7 @@ $app->get('/newscomments/:id', function ($id) use ($app) {
 	$app->render(200,array('data' => $newscomment->toArray()));
 });
 $app->delete('/newscomments/:id', function ($id) use ($app) {
-	$newscomment = NewsComments::find($id);
+	$newscomment = newscomments::find($id);
 	if(empty($newscomment)){
 		$app->render(404,array(
 			'error' => TRUE,
