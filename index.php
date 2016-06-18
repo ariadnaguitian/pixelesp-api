@@ -374,7 +374,7 @@ $app->get('/noticias', function () use ($app) {
 	->orderby('created_at','desc')
 	->get();
 	foreach ($images as $key => $value) {
-		$newscomment =  NewsComments::where('id_noticia', '=', $value->id)
+		$newscomment =  newscomments::where('id_noticia', '=', $value->id)
 		->select('newscomments.*','usuarios.name')
 		->leftjoin('usuarios', 'usuarios.id', '=', 'newscomments.idusuario')
 		
@@ -665,7 +665,7 @@ $app->post('/newscomments', function () use ($app) {
 
 
 		
-    $newscomment = new NewsComments();
+    $newscomment = new newscomments();
     $newscomment->idusuario  = $idusuario;
     $newscomment->id_noticia = $id_noticia;
     $newscomment->text 		 = $text;
@@ -686,7 +686,7 @@ $app->put('/newscomments/:id', function ($id) use ($app) {
         ));
 	}
 
-	$newscomment = NewsComments::find($id);
+	$newscomment = newscomments::find($id);
 	if(empty($newscomment)){
 		$app->render(404,array(
 			'error' => TRUE,
