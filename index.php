@@ -309,7 +309,7 @@ $country = $input['country'];
 	}
     $user->name = $name;
     $user->password = $password;
-        $user->username = $username;
+    $user->username = $username;
     $user->email = $email;
     $user->city = $city;
     $user->country = $country;
@@ -327,7 +327,7 @@ $app->get('/usuarios/:id', function ($id) use ($app) {
         ));
 	}
 	unset($user->password);
-	unset($user->username);
+
  
  	$user->imagenes = $db->table('imagenes')->select('Titulo')->where('IdUsuario', $user->id)->get();
 	$app->render(200,array('data' => $user->toArray()));
