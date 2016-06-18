@@ -629,8 +629,7 @@ $app->delete('/comments/:id', function ($id) use ($app) {
 
 //comentarios de noticias:
 
-$app->get('/
-	', function () use ($app) {
+$app->get('/newscomments', function () use ($app) {
 	$db = $app->db->getConnection();
 	$newscomments = $db->table('newscomments')->select()->orderby('created_at','desc')->get();
 	$app->render(200,array('data' => $newscomments));
@@ -1278,7 +1277,7 @@ $app->post('/enviarchat', function () use ($app) {
     $chat->iduseremisor = $user->id;
     $chat->save();
     $app->render(200,array('data' => $chat->toArray()));
-});
+
 
 
 
