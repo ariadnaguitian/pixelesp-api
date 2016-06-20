@@ -398,10 +398,18 @@ $app->post('/noticias', function () use ($app) {
             'msg'   => 'Se requiere descripción',
         ));
 	}
+	$idusuario = $input['idusuario'];
+	if(empty($idusuario)){
+		$app->render(500,array(
+			'error' => TRUE,
+            'msg'   => 'Se requiere descripción',
+        ));
+	}
 		
     $noticia = new Noticia();
     $noticia->Titulo = $Titulo;
     $noticia->Descripcion = $Descripcion;
+    $noticia->IdUsuario = $idusuario;
  
      
     $noticia->save();
@@ -426,6 +434,13 @@ $app->put('/noticias/:id', function ($id) use ($app) {
             'msg'   => 'Se requiere descripción',
         ));
 	}
+	$idusuario = $input['idusuario'];
+	if(empty($idusuario)){
+		$app->render(500,array(
+			'error' => TRUE,
+            'msg'   => 'Se requiere descripción',
+        ));
+	}
 
 	$noticia = Noticia::find($id);
 	if(empty($noticia)){
@@ -436,6 +451,7 @@ $app->put('/noticias/:id', function ($id) use ($app) {
 	}
     $noticia->Titulo = $Titulo;
     $noticia->Descripcion = $Descripcion;
+ 	$noticia->IdUsuario = $idusuario;
     $noticia->save();
     $app->render(200,array('data' => $noticia->toArray()));
 });
