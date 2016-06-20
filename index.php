@@ -207,16 +207,7 @@ $app->post('/usuarios', function () use ($app) {
         ));
 	}
 
-	$name = $input['name'];
-
- 	if(empty($name)){
-		$app->render(500,array(
-			'error' => TRUE,
-            'msg'   => 'Se requiere nombre',
-        ));
-	}
-
-
+	
 
 	$password = $input['password'];
 	if(empty($password)){
@@ -238,7 +229,7 @@ $app->post('/usuarios', function () use ($app) {
 
 	
     $user = new User();
-    $user->name = $name;
+  
     $user->password = $password;
      $user->username = $username;
    $user->email = $email;
