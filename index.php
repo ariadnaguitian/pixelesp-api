@@ -361,13 +361,13 @@ $app->get('/post/:id', function ($id) use ($app) {
 
 $app->get('/noticias', function () use ($app) {
 	$db = $app->db->getConnection();
-	$images = $db->table('noticias')->select('noticias.*','usuarios.name')
+	$images = $db->table('noticias')->select('noticias.*','usuarios.username')
 	->leftjoin('usuarios', 'usuarios.id', '=', 'noticias.idusuario')
 	->orderby('created_at','desc')
 	->get();
 	foreach ($images as $key => $value) {
 		$newscomment =  NewsComments::where('id_noticia', '=', $value->id)
-		->select('newscomments.*','usuarios.name')
+		->select('newscomments.*','usuarios.username')
 		->leftjoin('usuarios', 'usuarios.id', '=', 'newscomments.idusuario')
 		
 		->get();
