@@ -1261,7 +1261,7 @@ $app->get('/favimg', function () use ($app) {
 
 
 // agregar favoritos
-$app->post('/favimg', function () use ($app) {
+$app->post('/imgfavoritos', function () use ($app) {
   $token = $app->request->headers->get('auth-token');
 	if(empty($token)){
 		$app->render(500,array(
