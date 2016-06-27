@@ -12,8 +12,8 @@ require 'Models/Favoritos.php';
 require 'Models/Post.php';
 require 'Models/comment.php';
 require 'Models/newscomment.php';
-require 'Models/trabajo.php';
 require 'Models/imgcomment.php';
+require 'Models/trabajo.php';
 
 
 
@@ -361,13 +361,13 @@ $app->get('/post/:id', function ($id) use ($app) {
 
 $app->get('/noticias', function () use ($app) {
 	$db = $app->db->getConnection();
-	$images = $db->table('noticias')->select('noticias.*','usuarios.name')
+	$images = $db->table('noticias')->select('noticias.*','usuarios.username')
 	->leftjoin('usuarios', 'usuarios.id', '=', 'noticias.idusuario')
 	->orderby('created_at','desc')
 	->get();
 	foreach ($images as $key => $value) {
 		$newscomment =  NewsComments::where('id_noticia', '=', $value->id)
-		->select('newscomments.*','usuarios.name')
+		->select('newscomments.*','usuarios.username')
 		->leftjoin('usuarios', 'usuarios.id', '=', 'newscomments.idusuario')
 		
 		->get();
@@ -481,15 +481,15 @@ $app->delete('/noticias/:id', function ($id) use ($app) {
 
 
 
-
-
-
-
 $app->get('/imagenes', function () use ($app) {
 	$db = $app->db->getConnection();
 	$imagenes = $db->table('imagenes')->select()->orderby('created_at','desc')->get();
+	
 	$app->render(200,array('data' => $imagenes));
 });
+
+
+
 
 $app->post('/imagenes', function () use ($app) {
 	$input = $app->request->getBody();
@@ -553,16 +553,6 @@ $app->put('/imagenes/:id', function ($id) use ($app) {
 });
 $app->get('/imagenes/:id', function ($id) use ($app) {
 	$imagen = Image::find($id);
-
-	$imgComments =  ImgComments::where('id_imagen', '=', $imagen->id)->get();
-	if(empty($imgComments->toArray())){
-		$result = array();
-	} else{
-		$result = $imgComments->toArray(); 
-	}
-	$imagen->comentarios = $result;
-
-
 	if(empty($imagen)){
 		$app->render(404,array(
 			'error' => TRUE,
@@ -573,6 +563,14 @@ $app->get('/imagenes/:id', function ($id) use ($app) {
 });
 $app->delete('/imagenes/:id', function ($id) use ($app) {
 	$imagen = Image::find($id);
+
+	$imgComments =  ImgComments::where('id_imagen', '=', $imagen->id)->get();
+	if(empty($imgComments->toArray())){
+		$result = array();
+	} else{
+		$result = $imgComments->toArray(); 
+	}
+	$imagen->comentarios = $result;
 	if(empty($imagen)){
 		$app->render(404,array(
 			'error' => TRUE,
@@ -736,6 +734,12 @@ $app->delete('/newscomments/:id', function ($id) use ($app) {
 	$comment->delete();
 	$app->render(200);
 });
+
+
+
+
+
+
 //trabajos:
 
 $app->get('/trabajos', function () use ($app) {
@@ -1063,157 +1067,7 @@ $app->post('/findcomments', function () use ($app) {
 
 
 
-//Conexion con la tabla favoritos
-$app->get('/fav', function () use ($app) {
-	$db = $app->db->getConnection();
-	$fav = $db->table('favoritos')->select('id', 'id_imagen', 'id_usuario')->get();
-	$app->render(200,array('data' => $fav));
-});
-// agregar favoritos
-$app->post('/favoritos', function () use ($app) {
-  $token = $app->request->headers->get('auth-token');
-	if(empty($token)){
-		$app->render(500,array(
-			'error' => TRUE,
-            'msg'   => 'No has iniciado sesión ',
-        ));
-	}
-	$id_user_token = simple_decrypt($token, $app->enc_key);
-	$user = User::find($id_user_token);
-	if(empty($user)){
-		$app->render(500,array(
-			'error' => TRUE,
-            'msg'   => 'No has iniciado sesión ',
-        ));
-	}
-	
-  $input = $app->request->getBody();
-  
-  $id_imagen = $input['id_imagen'];
-	if(empty($id_imagen)){
-		$app->render(500,array(
-			'error' => TRUE,
-            'msg'   => 'Id anuncio is required',
-        ));
-	}
-	
-	$favorito = new Favorito();
-    $favorito->id_imagen = $id_imagen;
-    $favorito->id_usuario = $user->id;
-    $favorito->save();
-    $app->render(200,array('data' => $favorito->toArray()));
-});
-// Traer favorito especifico para borrar
-$app->get('/misfavoritos', function () use ($app) {
-  $token = $app->request->headers->get('auth-token');
-	if(empty($token)){
-		$app->render(500,array(
-			'error' => TRUE,
-            'msg'   => 'No has iniciado sesión  12',
-        ));
-	}
-	$id_user_token = simple_decrypt($token, $app->enc_key);
-	$user = User::find($id_user_token);
-	if(empty($user)){
-		$app->render(500,array(
-			'error' => TRUE,
-            'msg'   => 'No has iniciado sesión  15',
-        ));
-	}
-	
-	$input = $app->request->getBody();
-  
-	  $idanuncio = $input['id_imagen'];
-		if(empty($id_imagen)){
-			$app->render(500,array(
-				'error' => TRUE,
-				'msg'   => 'Id imagen is required',
-			));
-		}
-	
-	$db = $app->db->getConnection();
-	
-	$favoritos = $db->table('favoritos')->select('id', 'id_usuario', 'id_imagen')->where('id_usuario', $user->id)->where('id_imagen', $id_imagen)->get();
-	
-	$app->render(200,array('data' => $favoritos));
-});
-// ver favorito y borrar 
-$app->delete('/delfavoritosimg', function () use ($app) {
-  $token = $app->request->headers->get('auth-token');
-	if(empty($token)){
-		$app->render(500,array(
-			'error' => TRUE,
-            'msg'   => 'No has iniciado sesión  13',
-        ));
-	}
-	$id_user_token = simple_decrypt($token, $app->enc_key);
-	$user = User::find($id_user_token);
-	if(empty($user)){
-		$app->render(500,array(
-			'error' => TRUE,
-            'msg'   => 'No has iniciado sesión  15',
-        ));
-	}
-	
-	
-	$input = $app->request->getBody();
-  
-	  $id_imagen = $input['id_imagen'];
-		if(empty($id_imagen)){
-			$app->render(500,array(
-				'error' => TRUE,
-				'msg'   => 'Id imagen is required',
-			));
-		}
-	
-	$db = $app->db->getConnection();
-	
-	$favoritos = $db->table('favoritos')->select('id', 'id_usuario', 'id_imagen')->where('id_usuario', $user->id)->where('id_imagen', $id_imagen)->get();
-	
-	$idfav = $favoritos->id;
-	
-	$favorito = Favorito::find($idfav);
-	if(empty($favorito)){
-		$app->render(404,array(
-			'error' => TRUE,
-            'msg'   => 'favorito not found 4',
-        ));
-	}
-	$favorito->delete();
-	$app->render(200);
-		
-});
-// listar mis favoritos
-$app->get('/misfavoritoslist', function () use ($app) {
-	
-	$token = $app->request->headers->get('auth-token');
-	if(empty($token)){
-		$app->render(500,array(
-			'error' => TRUE,
-            'msg'   => 'No has iniciado sesión ',
-        ));
-	}
-	$id_user_token = simple_decrypt($token, $app->enc_key);
-	$user = User::find($id_user_token);
-	if(empty($user)){
-		$app->render(500,array(
-			'error' => TRUE,
-            'msg'   => 'No has iniciado sesión ',
-        ));
-	}
-	
-	
-	$db = $app->db->getConnection();
-	
-	$favoritos = $db->table('favoritos')->select('id', 'id_usuario', 'id_imagen')->where('id_usuario', $user->id)->get();
-	foreach ($favoritos as $key => $favoritos) {
-		$imagenes = $db->table('imagenes')->select('id', 'id_usuario', 'titulo', 'precio', 'descripcion', 'barrio')->where('id', $favoritos->id_imagen)->get();
-		
-		$favoritos[$key]->imagenes = $imagenes;
-	}
-		
-	$app->render(200,array('data' => $favoritos));
-});
+
 // chat con el anunciante
 //Conexion con la tabla favoritos
 $app->get('/chats', function () use ($app) {
@@ -1309,7 +1163,7 @@ $app->get('/favimg', function () use ($app) {
 
 
 // agregar favoritos
-$app->post('/favoritosimg', function () use ($app) {
+$app->post('/imgfavoritos', function () use ($app) {
   $token = $app->request->headers->get('auth-token');
 	if(empty($token)){
 		$app->render(500,array(
@@ -1332,7 +1186,7 @@ $app->post('/favoritosimg', function () use ($app) {
 	if(empty($idimagen)){
 		$app->render(500,array(
 			'error' => TRUE,
-            'msg'   => 'Id anuncio is required',
+            'msg'   => 'Id imagen is required',
         ));
 	}
 	
