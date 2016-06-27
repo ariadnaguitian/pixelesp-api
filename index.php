@@ -474,7 +474,19 @@ $app->get('/imagenes', function () use ($app) {
 	
 	->orderby('created_at','desc')		
 	->get();		
-
+	foreach ($imagenes as $key => $value) {		
+		$imgcomment =  ImgComments::where('id_imagen', '=', $value->id)		
+		->select('imgcomments.*','usuarios.name')		
+		->leftjoin('usuarios', 'usuarios.id', '=', 'imgcomments.idusuario')		
+				
+		->get();		
+		if(empty($imgcomment)){		
+			$result = array();		
+		} else{		
+			$result = $imgcomment->toArray(); 		
+		}		
+		$imagenes[$key]->comentarios = $result;		
+	}
 	
 	$app->render(200,array('data' => $imagenes));
 });
@@ -727,7 +739,92 @@ $app->delete('/newscomments/:id', function ($id) use ($app) {
 });
 
 
-	
+	//comentarios imagenes:		
+$app->get('/imgcomments', function () use ($app) {		
+	$db = $app->db->getConnection();		
+	$imgcomments = $db->table('imgcomments')->select()->orderby('created_at','desc')->get();		
+	$app->render(200,array('data' => $imgcomments));		
+});		
+$app->post('/imgcomments', function () use ($app) {		
+	$input = $app->request->getBody();		
+	$text = $input['text'];		
+	$idusuario = $input['idusuario'];		
+	$id_imagen = $input['id_imagen'];		
+			
+	if(empty($text)){		
+		$app->render(500,array(		
+			'error' => TRUE,		
+            'msg'   => 'text is required',		
+        ));		
+	}			
+			
+	if(empty($idusuario)){		
+		$app->render(500,array(		
+			'error' => TRUE,		
+            'msg'   => 'idusuario is required',		
+        ));		
+	}		
+			
+	if(empty($id_imagen)){		
+		$app->render(500,array(		
+			'error' => TRUE,		
+            'msg'   => 'id_imagen is required',		
+        ));		
+	}		
+				
+    $imgcomment = new ImgComments();		
+    $imgcomment->idusuario  = $idusuario;		
+    $imgcomment->id_imagen = $id_imagen;		
+    $imgcomment->text 		 = $text;		
+ 		
+     		
+    $imgcomment->save();		
+    $app->render(200,array('data' => $imgcomment->toArray()));		
+});		
+$app->put('/imgcomments/:id', function ($id) use ($app) {		
+	$input = $app->request->getBody();		
+			
+	$text = $input['text'];		
+	if(empty($text)){		
+		$app->render(500,array(		
+			'error' => TRUE,		
+            'msg'   => 'text is required',		
+        ));		
+	}		
+	$imgcomment = ImgComments::find($id);		
+	if(empty($imgcomment)){		
+		$app->render(404,array(		
+			'error' => TRUE,		
+            'msg'   => 'imgcomment not found',		
+        ));		
+	}		
+    $imgcomment->text = $text;		
+    $imgcomment->save();		
+    $app->render(200,array('data' => $imgcomment->toArray()));		
+});		
+$app->get('/imgcomments/:id', function ($id) use ($app) {		
+	$imgcomment = ImgComments::find($id);		
+	if(empty($imgcomment)){		
+		$app->render(404,array(		
+			'error' => TRUE,		
+            'msg'   => 'imgcomment not found',		
+        ));		
+	}		
+	$app->render(200,array('data' => $imgcomment->toArray()));		
+});		
+$app->delete('/imgcomments/:id', function ($id) use ($app) {		
+	$imgcomment = ImgComments::find($id);		
+	if(empty($imgcomment)){		
+		$app->render(404,array(		
+			'error' => TRUE,		
+            'msg'   => 'comment not found',		
+        ));		
+	}		
+	$comment->delete();		
+	$app->render(200);		
+});
+
+
 
 //trabajos:
 
