@@ -483,8 +483,8 @@ $app->delete('/noticias/:id', function ($id) use ($app) {
 
 $app->get('/imagenes', function () use ($app) {
 	$db = $app->db->getConnection();
-		
-		$imagenes = $db->table('imagenes')->select()
+
+	$imagenes = $db->table('imagenes')->select('imagenes.*','usuarios.name')			
 	->leftjoin('usuarios', 'usuarios.id', '=', 'imagenes.idusuario')		
 	->orderby('created_at','desc')		
 	->get();		
@@ -752,7 +752,8 @@ $app->delete('/newscomments/:id', function ($id) use ($app) {
 	$app->render(200);
 });
 
-//comentarios imagenes:		
+
+	//comentarios imagenes:		
 $app->get('/imgcomments', function () use ($app) {		
 	$db = $app->db->getConnection();		
 	$imgcomments = $db->table('imgcomments')->select()->orderby('created_at','desc')->get();		
@@ -836,7 +837,6 @@ $app->delete('/imgcomments/:id', function ($id) use ($app) {
 	$comment->delete();		
 	$app->render(200);		
 });
-
 
 
 
