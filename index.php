@@ -442,6 +442,13 @@ $app->put('/noticias/:id', function ($id) use ($app) {
             'msg'   => 'Se requiere descripción',
         ));
 	}
+	$username = $input['username'];
+	if(empty($username)){
+		$app->render(500,array(
+			'error' => TRUE,
+            'msg'   => 'Se requiere usuario',
+        ));
+	}
 
 	$noticia = Noticia::find($id);
 	if(empty($noticia)){
@@ -453,6 +460,7 @@ $app->put('/noticias/:id', function ($id) use ($app) {
     $noticia->Titulo = $Titulo;
     $noticia->Descripcion = $Descripcion;
  	$noticia->IdUsuario = $idusuario;
+ 	$noticia->username = $username;
     $noticia->save();
     $app->render(200,array('data' => $noticia->toArray()));
 });
