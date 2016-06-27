@@ -251,14 +251,7 @@ $app->put('/usuarios/:id', function ($id) use ($app) {
             'msg'   => 'Se requiere nombre',
         ));
 	}
-	$password = $input['password'];
-	if(empty($password)){
-		$app->render(500,array(
-			'error' => TRUE,
-            'msg'   => 'Se requiere contraseña',
-        ));
-	}
-
+	
 	$username = $input['username'];
 	if(empty($username)){
 		$app->render(500,array(
@@ -300,7 +293,6 @@ $country = $input['country'];
         ));
 	}
     $user->name = $name;
-    $user->password = $password;
     $user->username = $username;
     $user->email = $email;
     $user->city = $city;
