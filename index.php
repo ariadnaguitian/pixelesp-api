@@ -556,6 +556,12 @@ $app->put('/imagenes/:id', function ($id) use ($app) {
 });
 $app->get('/imagenes/:id', function ($id) use ($app) {
 	$imagen = Image::find($id);
+	$imgComments =  ImgComments::where('id_imagen', '=', $imagen->id)->get();
+	if(empty($imgComments->toArray())){
+		$result = array();
+	} else{
+		$result = $imgComments->toArray(); 
+	}
 	if(empty($imagen)){
 		$app->render(404,array(
 			'error' => TRUE,
