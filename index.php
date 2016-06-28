@@ -465,8 +465,6 @@ $app->delete('/noticias/:id', function ($id) use ($app) {
 });
 
 
-
-
 $app->get('/imagenes', function () use ($app) {
 	$db = $app->db->getConnection();
 
@@ -475,8 +473,6 @@ $app->get('/imagenes', function () use ($app) {
 	
 	$app->render(200,array('data' => $imagenes));
 });
-
-
 
 
 $app->post('/imagenes', function () use ($app) {
