@@ -445,6 +445,16 @@ $app->put('/noticias/:id', function ($id) use ($app) {
 });
 $app->get('/noticias/:id', function ($id) use ($app) {
 	$noticia = Noticia::find($id);
+
+
+$newscomments =  NewsComments::where('id_noticia', '=', $noticia->id)->get();
+ 	if(empty($newscomments->toArray())){
+ 		$result = array();
+ 	} else{
+ 		$result = $newscomments->toArray(); 
+ 	}
+ 	$imagen->comentarios = $result;
+ 	
 	if(empty($noticia)){
 		$app->render(404,array(
 			'error' => TRUE,
@@ -453,6 +463,8 @@ $app->get('/noticias/:id', function ($id) use ($app) {
 	}
 	$app->render(200,array('data' => $noticia->toArray()));
 });
+
+
 $app->delete('/noticias/:id', function ($id) use ($app) {
 	$noticia = Noticia::find($id);
 	if(empty($noticia)){
