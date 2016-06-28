@@ -453,8 +453,8 @@ $newscomments =  NewsComments::where('id_noticia', '=', $noticia->id)->get();
  	} else{
  		$result = $newscomments->toArray(); 
  	}
- 	$imagen->comentarios = $result;
- 	
+ 	$noticia->comentarios = $result;
+
 	if(empty($noticia)){
 		$app->render(404,array(
 			'error' => TRUE,
