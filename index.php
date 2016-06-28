@@ -549,7 +549,7 @@ $app->put('/imagenes/:id', function ($id) use ($app) {
 $app->get('/imagenes/:id', function ($id) use ($app) {
 	$imagen = Image::find($id);
 
-	$imgComments =  ImgComments::where('id_imagen', '=', $imagen->id)->get();
+	$imgComments =  ImgComments::where('id_imagen', '=', $imagen->id)->orderby('created_at','desc')->get();
  	if(empty($imgComments->toArray())){
  		$result = array();
  	} else{
