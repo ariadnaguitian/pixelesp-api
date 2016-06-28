@@ -470,8 +470,8 @@ $app->delete('/noticias/:id', function ($id) use ($app) {
 $app->get('/imagenes', function () use ($app) {
 	$db = $app->db->getConnection();
 
-	$imagenes = $db->table('imagenes')->select()			
-	
+	$imagenes = $db->table('imagenes')->select('imagenes.*','usuarios.name')			
+	->leftjoin('usuarios', 'usuarios.id', '=', 'imagenes.idusuario')		
 	->orderby('created_at','desc')		
 	->get();		
 	foreach ($imagenes as $key => $value) {		
