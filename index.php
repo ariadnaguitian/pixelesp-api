@@ -377,6 +377,14 @@ $app->get('/noticias', function () use ($app) {
 $app->post('/noticias', function () use ($app) {
 	$input = $app->request->getBody();
 
+$idusuario = $input['idusuario'];
+	if(empty($idusuario)){
+		$app->render(500,array(
+			'error' => TRUE,
+            'msg'   => 'Se requiere descripción',
+        ));
+	}
+	
 	$Titulo = $input['Titulo'];
 
  	if(empty($Titulo)){
@@ -392,18 +400,13 @@ $app->post('/noticias', function () use ($app) {
             'msg'   => 'Se requiere descripción',
         ));
 	}
-	$idusuario = $input['idusuario'];
-	if(empty($idusuario)){
-		$app->render(500,array(
-			'error' => TRUE,
-            'msg'   => 'Se requiere descripción',
-        ));
-	}
+	
 		
     $noticia = new Noticia();
+    $noticia->IdUsuario = $idusuario;
     $noticia->Titulo = $Titulo;
     $noticia->Descripcion = $Descripcion;
-    $noticia->IdUsuario = $idusuario;
+   
  
      
     $noticia->save();
