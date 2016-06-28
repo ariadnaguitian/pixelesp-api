@@ -356,6 +356,7 @@ $app->get('/noticias', function () use ($app) {
 	$images = $db->table('noticias')->select('noticias.*','usuarios.username')
 	->leftjoin('usuarios', 'usuarios.id', '=', 'noticias.idusuario')
 	->orderby('created_at','desc')
+
 	->get();
 	foreach ($images as $key => $value) {
 		$newscomment =  NewsComments::where('id_noticia', '=', $value->id)
@@ -467,9 +468,7 @@ $app->delete('/noticias/:id', function ($id) use ($app) {
 
 $app->get('/imagenes', function () use ($app) {
 	$db = $app->db->getConnection();
-
 	$imagenes = $db->table('imagenes')->select()->orderby('created_at','desc')->get();
-	
 	
 	$app->render(200,array('data' => $imagenes));
 });
@@ -537,6 +536,15 @@ $app->put('/imagenes/:id', function ($id) use ($app) {
 });
 $app->get('/imagenes/:id', function ($id) use ($app) {
 	$imagen = Image::find($id);
+
+	$imgComments =  ImgComments::where('id_imagen', '=', $imagen->id)->get();
+ 	if(empty($imgComments->toArray())){
+ 		$result = array();
+ 	} else{
+ 		$result = $imgComments->toArray(); 
+ 	}
+ 	$imagen->comentarios = $result;
+
 	if(empty($imagen)){
 		$app->render(404,array(
 			'error' => TRUE,
