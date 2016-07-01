@@ -227,13 +227,14 @@ $app->post('/usuarios', function () use ($app) {
         ));
 	}
 
-
+$imagen = $input['paintprogram.png'];
 	
     $user = new User();
   
     $user->password = $password;
      $user->username = $username;
    $user->email = $email;
+   $user->imagen = $imagen;
 
      
     $user->save();
@@ -384,7 +385,7 @@ $idusuario = $input['idusuario'];
             'msg'   => 'Se requiere descripción',
         ));
 	}
-	
+
 	$Titulo = $input['Titulo'];
 
  	if(empty($Titulo)){
@@ -974,10 +975,19 @@ $app->post('/imagen', function () use ($app) {
             'msg'   => 'title is required',
         ));
 	}
+
+		$idusuario = $input['idusuario'];
+ 	if(empty($idusuario)){
+ 		$app->render(500,array(
+ 			'error' => TRUE,
+             'msg'   => 'Se requiere descripción',
+         ));
+ 	}
 	
 	$imagen = new Image();
 	$imagen->title = $title;
-    $imagen->IdUsuario = $user->id;
+	$imagen->IdUsuario = $idusuario;
+   
     $imagen->save();
     $app->render(200,array('data' => $imagen->toArray()));
 });
