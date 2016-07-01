@@ -227,14 +227,13 @@ $app->post('/usuarios', function () use ($app) {
         ));
 	}
 
-$imagen = $input['paintprogram.png'];
+
 	
     $user = new User();
   
     $user->password = $password;
      $user->username = $username;
    $user->email = $email;
-   $user->imagen = $imagen;
 
      
     $user->save();
