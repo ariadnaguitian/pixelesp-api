@@ -217,6 +217,8 @@ $app->post('/usuarios', function () use ($app) {
             'msg'   => 'Se requiere contraseña',
         ));
 	}
+
+
 	$email = $input['email'];
 
 
@@ -226,12 +228,15 @@ $app->post('/usuarios', function () use ($app) {
             'msg'   => 'Se requiere email',
         ));
 	}
+  
+  $imagen = 'paintprogram.png';
 
 
 	
     $user = new User();
   
     $user->password = $password;
+      $user->imagen = $imagen;
      $user->username = $username;
    $user->email = $email;
 
