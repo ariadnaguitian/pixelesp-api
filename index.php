@@ -197,6 +197,8 @@ $app->get('/usuarios', function () use ($app) {
 
 $app->post('/usuarios', function () use ($app) {
 	$input = $app->request->getBody();
+
+
 	$username = $input['username'];
 
  	if(empty($username)){
@@ -238,7 +240,7 @@ $app->post('/usuarios', function () use ($app) {
      $user->username = $username;
    $user->email = $email;
    
-  if($user->email == $email){		
+ if($user->email == $email){		
         $app->render(500,array(		     
             'error' => TRUE,		
             'msg'   => 'email ya registrado',		
