@@ -240,14 +240,14 @@ $app->post('/usuarios', function () use ($app) {
      $user->username = $username;
    $user->email = $email;
        $user->imagen = $imagen;
-       
- if($user->email == $email){		
+
+ if( $email == $user->email){		
         $app->render(500,array(		     
             'error' => TRUE,		
             'msg'   => 'email ya registrado',		
         ));		
     } 		
-     if($user->username == $username){		
+     if($username ==  $user->username ){		
         $app->render(500,array(		
             'error' => TRUE,		
             'msg'   => 'username ya registrado',		
