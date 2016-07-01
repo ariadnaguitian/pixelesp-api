@@ -228,7 +228,19 @@ $app->post('/usuarios', function () use ($app) {
             'msg'   => 'Se requiere email',
         ));
 	}
-        
+  
+  $imagen = 'paintprogram.png';
+
+
+	
+    $user = new User();
+  
+    $user->password = $password;
+  
+     $user->username = $username;
+   $user->email = $email;
+       $user->imagen = $imagen;
+       
  if($user->email == $email){		
         $app->render(500,array(		     
             'error' => TRUE,		
@@ -241,18 +253,6 @@ $app->post('/usuarios', function () use ($app) {
             'msg'   => 'username ya registrado',		
         ));		
     } 
-  $imagen = 'paintprogram.png';
-
-
-	
-    $user = new User();
-  
-    $user->password = $password;
-  
-     $user->username = $username;
-   $user->email = $email;
-       $user->imagen = $imagen;
- 
      
     $user->save();
     $app->render(200,array('data' => $user->toArray()));
