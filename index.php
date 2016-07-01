@@ -241,18 +241,6 @@ $app->post('/usuarios', function () use ($app) {
    $user->email = $email;
        $user->imagen = $imagen;
 
- if( $email == $user->email){		
-        $app->render(500,array(		     
-            'error' => TRUE,		
-            'msg'   => 'email ya registrado',		
-        ));		
-    } 		
-     if($username ==  $user->username ){		
-        $app->render(500,array(		
-            'error' => TRUE,		
-            'msg'   => 'username ya registrado',		
-        ));		
-    } 
      
     $user->save();
     $app->render(200,array('data' => $user->toArray()));
