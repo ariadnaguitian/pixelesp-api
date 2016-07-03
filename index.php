@@ -368,7 +368,7 @@ $app->get('/noticias', function () use ($app) {
 		$newscomment =  NewsComments::where('id_noticia', '=', $value->id)
 		->select('newscomments.*','usuarios.username','usuarios.imagen')
 		->leftjoin('usuarios', 'usuarios.id', '=', 'newscomments.idusuario')
-		
+		->orderby('created_at','desc')
 		->get();
 		if(empty($newscomment)){
 			$result = array();
@@ -562,7 +562,7 @@ $app->get('/imagenes/:id', function ($id) use ($app) {
 	$imagen = Image::find($id);
 
 	$imgComments =  ImgComments::where('id_imagen', '=', $imagen->id)
-	->select('imgcomments.*','usuarios.username')
+	->select('imgcomments.*','usuarios.username', 'usuarios.name')
 	->leftjoin('usuarios', 'usuarios.id', '=', 'imgcomments.idusuario')
 	->orderby('created_at','desc')->get();
  	if(empty($imgComments->toArray())){
