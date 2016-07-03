@@ -366,7 +366,7 @@ $app->get('/noticias', function () use ($app) {
 	->get();
 	foreach ($images as $key => $value) {
 		$newscomment =  NewsComments::where('id_noticia', '=', $value->id)
-		->select('newscomments.*','usuarios.username')
+		->select('newscomments.*','usuarios.username','usuarios.imagen')
 		->leftjoin('usuarios', 'usuarios.id', '=', 'newscomments.idusuario')
 		
 		->get();
