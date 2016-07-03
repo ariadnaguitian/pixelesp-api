@@ -492,11 +492,23 @@ $app->get('/imagenes', function () use ($app) {
 	$imagenes = $db->table('imagenes')->select('imagenes.*','usuarios.username')
 	->leftjoin('usuarios', 'usuarios.id', '=', 'imagenes.idusuario')
 	->orderby('created_at','desc')->get();
-	
+	foreach ($imagenes as $key => $value) {
+		$imgcomment =  ImgComments::where('id_imagen', '=', $value->id)
+		->select('imgcomments.*','usuarios.username')
+		->leftjoin('usuarios', 'usuarios.id', '=', 'imgcomments.idusuario')
+		
+		->get();
+		if(empty($imgcomment)){
+			$result = array();
+		} else{
+			$result = $newscomment->toArray(); 
+		}
+		$imagenes[$key]->comentarios = $result;
+	}
 	$app->render(200,array('data' => $imagenes));
 });
 
-
+	
 
 $app->post('/imagenes', function () use ($app) {
 	$input = $app->request->getBody();
