@@ -289,6 +289,15 @@ $country = $input['country'];
         ));
 	}
 
+	$biografia = $input['biografia'];
+	if(empty($biografia)){
+		$app->render(500,array(
+			'error' => TRUE,
+            'msg'   => 'Se requiere descripción',
+        ));
+	}
+
+
 
 
 	$user = User::find($id);
@@ -303,6 +312,7 @@ $country = $input['country'];
     $user->email = $email;
     $user->city = $city;
     $user->country = $country;
+     $user->biografia = $biografia;
 
     $user->save();
     $app->render(200,array('data' => $user->toArray()));
