@@ -58,15 +58,6 @@ $app->get('/', function () use ($app) {
 	$app->render(200,array('msg' => 'pixelesp'));
 });
 
-$location = $_POST['directory'];
-$uploadfile = $_POST['fileName'];
-$uploadfilename = $_FILES['file']['tmp_name'];
- 
-if(move_uploaded_file($uploadfilename, $location.'/'.$uploadfile)){
-        echo 'File successfully uploaded!';
-} else {
-        echo 'Upload error!';
-}
 
 
 $app->post('/login', function () use ($app) {
