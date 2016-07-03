@@ -489,11 +489,13 @@ $app->delete('/noticias/:id', function ($id) use ($app) {
 
 $app->get('/imagenes', function () use ($app) {
 	$db = $app->db->getConnection();
-	$imagenes = $db->table('imagenes')->select()->orderby('created_at','desc')->get();
+	$imagenes = $db->table('imagenes')->select('imagenes.*','usuarios.username')->orderby('created_at','desc')->get();
 	
 	$app->render(200,array('data' => $imagenes));
 });
 
+	
+	
 
 $app->post('/imagenes', function () use ($app) {
 	$input = $app->request->getBody();
