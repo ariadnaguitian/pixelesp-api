@@ -561,7 +561,10 @@ $app->put('/imagenes/:id', function ($id) use ($app) {
 $app->get('/imagenes/:id', function ($id) use ($app) {
 	$imagen = Image::find($id);
 
-	$imgComments =  ImgComments::where('id_imagen', '=', $imagen->id)->orderby('created_at','desc')->get();
+	$imgComments =  ImgComments::where('id_imagen', '=', $imagen->id)
+	->select('imgcomments.*','usuarios.username')
+	->leftjoin('usuarios', 'usuarios.id', '=', 'imgcomments.idusuario')
+	->orderby('created_at','desc')->get();
  	if(empty($imgComments->toArray())){
  		$result = array();
  	} else{
@@ -575,6 +578,7 @@ $app->get('/imagenes/:id', function ($id) use ($app) {
             'msg'   => 'imagen no encontrada',
         ));
 	}
+	
 	$app->render(200,array('data' => $imagen->toArray()));
 });
 $app->delete('/imagenes/:id', function ($id) use ($app) {
