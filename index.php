@@ -12,6 +12,7 @@ require 'Models/Favoritos.php';
 require 'Models/Post.php';
 require 'Models/comment.php';
 require 'Models/newscomment.php';
+require 'Models/empleocomment.php';
 require 'Models/imgcomment.php';
 require 'Models/trabajo.php';
 
@@ -834,13 +835,120 @@ $app->delete('/imgcomments/:id', function ($id) use ($app) {
 	$app->render(200);		
 });
 
+//comentarios de trabajos:
+$app->get('/empleocomments', function () use ($app) {
+	$db = $app->db->getConnection();
+	$empleocomments = $db->table('empleocomments')->select()->orderby('created_at','desc')->get();
+	$app->render(200,array('data' => $empleocomments));
+});
+
+$app->post('/empleocomments', function () use ($app) {
+	$input = $app->request->getBody();
+
+	$text = $input['text'];
+	$idusuario = $input['idusuario'];
+	$id_empleo = $input['id_empleo'];
+	
+	if(empty($text)){
+		$app->render(500,array(
+			'error' => TRUE,
+            'msg'   => 'text is required',
+        ));
+	}	
+	
+	if(empty($idusuario)){
+		$app->render(500,array(
+			'error' => TRUE,
+            'msg'   => 'idusuario is required',
+        ));
+	}
+	
+	if(empty($id_empleo)){
+		$app->render(500,array(
+			'error' => TRUE,
+            'msg'   => 'id_empleo is required',
+        ));
+	}
+
+
+		
+    $empleocomment = new EmpleoComments();
+    $empleocomment->idusuario  = $idusuario;
+    $empleocomment->id_empleo = $id_empleo;
+    $empleocomment->text 		 = $text;
+ 
+     
+    $empleocomment->save();
+    $app->render(200,array('data' => $empleocomment->toArray()));
+});
+
+$app->put('/empleocomments/:id', function ($id) use ($app) {
+	$input = $app->request->getBody();
+	
+	$text = $input['text'];
+	if(empty($text)){
+		$app->render(500,array(
+			'error' => TRUE,
+            'msg'   => 'text is required',
+        ));
+	}
+
+	$empleocomment = empleoComments::find($id);
+	if(empty($empleocomment)){
+		$app->render(404,array(
+			'error' => TRUE,
+            'msg'   => 'empleocomment not found',
+        ));
+	}
+    $empleocomment->text = $text;
+    $empleocomment->save();
+    $app->render(200,array('data' => $empleocomment->toArray()));
+});
+$app->get('/empleocomments/:id', function ($id) use ($app) {
+	$empleocomment = EmpleoComments::find($id);
+	if(empty($empleocomment)){
+		$app->render(404,array(
+			'error' => TRUE,
+            'msg'   => 'empleocomment not found',
+        ));
+	}
+	$app->render(200,array('data' => $empleocomment->toArray()));
+});
+$app->delete('/empleocomments/:id', function ($id) use ($app) {
+	$empleocomment = EmpleoComments::find($id);
+	if(empty($empleocomment)){
+		$app->render(404,array(
+			'error' => TRUE,
+            'msg'   => 'comment not found',
+        ));
+	}
+	$comment->delete();
+	$app->render(200);
+});
 
 
 //trabajos:
 
 $app->get('/trabajos', function () use ($app) {
-	$db = $app->db->getConnection();
-	$trabajos = $db->table('trabajos')->select()->orderby('created_at','desc')->get();
+    $db = $app->db->getConnection();
+	$trabajos = $db->table('trabajos')->select('trabajos.*','usuarios.username')
+	->leftjoin('usuarios', 'usuarios.id', '=', 'trabajos.idusuario')
+	->orderby('created_at','desc')
+
+	->get();
+	foreach ($trabajos as $key => $value) {
+		$empleocomment =  EmpleoComments::where('id_empleo', '=', $value->id)
+		->select('empleocomments.*','usuarios.username')
+		->leftjoin('usuarios', 'usuarios.id', '=', 'empleocomments.idusuario')
+		
+		->get();
+		if(empty($empleocomment)){
+			$result = array();
+		} else{
+			$result = $empleocomment->toArray(); 
+		}
+		$trabajos[$key]->comentarios = $result;
+	}
 	$app->render(200,array('data' => $trabajos));
 });
 
@@ -905,6 +1013,13 @@ $app->put('/trabajos/:id', function ($id) use ($app) {
 });
 $app->get('/trabajos/:id', function ($id) use ($app) {
 	$trabajo = Trabajo::find($id);
+	$empleocomments =  EmpleoComments::where('id_empleo', '=', $trabajo->id)->get();
+ 	if(empty($empleocomments->toArray())){
+ 		$result = array();
+ 	} else{
+ 		$result = $empleocomments->toArray(); 
+ 	}
+ 	$trabajo->comentarios = $result;
 	if(empty($trabajo)){
 		$app->render(404,array(
 			'error' => TRUE,
@@ -913,6 +1028,7 @@ $app->get('/trabajos/:id', function ($id) use ($app) {
 	}
 	$app->render(200,array('data' => $trabajo->toArray()));
 });
+
 $app->delete('/trabajos/:id', function ($id) use ($app) {
 	$trabajo = Trabajo::find($id);
 	if(empty($trabajo)){
