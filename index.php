@@ -289,6 +289,13 @@ $country = $input['country'];
             'msg'   => 'Se requiere país',
         ));
 	}
+$biografia = $input['biografia'];		
+	if(empty($biografia)){		
+		$app->render(500,array(		
+			'error' => TRUE,		
+            'msg'   => 'Se requiere descripción',		
+        ));		
+	}		
 
 
 
@@ -304,6 +311,7 @@ $country = $input['country'];
     $user->email = $email;
     $user->city = $city;
     $user->country = $country;
+    $user->biografia = $biografia;
 
     $user->save();
     $app->render(200,array('data' => $user->toArray()));
@@ -367,9 +375,9 @@ $app->get('/noticias', function () use ($app) {
 	->get();
 	foreach ($images as $key => $value) {
 		$newscomment =  NewsComments::where('id_noticia', '=', $value->id)
-		->select('newscomments.*','usuarios.username')
+		->select('newscomments.*','usuarios.username','usuarios.imagen')
 		->leftjoin('usuarios', 'usuarios.id', '=', 'newscomments.idusuario')
-		
+		->orderby('created_at','desc')
 		->get();
 		if(empty($newscomment)){
 			$result = array();
@@ -490,7 +498,9 @@ $app->delete('/noticias/:id', function ($id) use ($app) {
 
 $app->get('/imagenes', function () use ($app) {
 	$db = $app->db->getConnection();
-	$imagenes = $db->table('imagenes')->select()->orderby('created_at','desc')->get();
+$imagenes = $db->table('imagenes')->select('imagenes.*','usuarios.username')			
+	->leftjoin('usuarios', 'usuarios.id', '=', 'imagenes.idusuario')		
+	->orderby('created_at','desc')->get();
 	
 	$app->render(200,array('data' => $imagenes));
 });
@@ -559,7 +569,10 @@ $app->put('/imagenes/:id', function ($id) use ($app) {
 $app->get('/imagenes/:id', function ($id) use ($app) {
 	$imagen = Image::find($id);
 
-	$imgComments =  ImgComments::where('id_imagen', '=', $imagen->id)->orderby('created_at','desc')->get();
+	$imgComments =  ImgComments::where('id_imagen', '=', $imagen->id)			
+	->select('imgcomments.*','usuarios.username', 'usuarios.imagen')		
+	->leftjoin('usuarios', 'usuarios.id', '=', 'imgcomments.idusuario')		
+	->orderby('created_at','desc')->get();
  	if(empty($imgComments->toArray())){
  		$result = array();
  	} else{
@@ -937,9 +950,9 @@ $app->get('/trabajos', function () use ($app) {
 	->get();
 	foreach ($trabajos as $key => $value){
 		$empleocomment =  EmpleoComments::where('id_empleo', '=', $value->id)
-		->select('empleocomments.*','usuarios.username')
+		->select('empleocomments.*','usuarios.username','usuarios.imagen')
 		->leftjoin('usuarios', 'usuarios.id', '=', 'empleocomments.idusuario')
-		
+		->orderby('created_at','desc')
 		->get();
 		if(empty($empleocomment)){
 			$result = array();
