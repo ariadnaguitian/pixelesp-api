@@ -932,11 +932,10 @@ $app->delete('/empleocomments/:id', function ($id) use ($app) {
 $app->get('/trabajos', function () use ($app) {
     $db = $app->db->getConnection();
 	$trabajos = $db->table('trabajos')->select('trabajos.*','usuarios.username')
-	->leftjoin('usuarios', 'usuarios.id', '=', 'trabajos.idusuario')
+	->leftjoin('usuarios', 'usuarios.id','=', 'trabajos.idusuario')
 	->orderby('created_at','desc')
-
 	->get();
-	foreach ($trabajos as $key => $value) {
+	foreach ($trabajos as $key => $value){
 		$empleocomment =  EmpleoComments::where('id_empleo', '=', $value->id)
 		->select('empleocomments.*','usuarios.username')
 		->leftjoin('usuarios', 'usuarios.id', '=', 'empleocomments.idusuario')
