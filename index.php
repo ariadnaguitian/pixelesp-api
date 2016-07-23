@@ -12,7 +12,7 @@ if(move_uploaded_file($uploadfilename, $location.'/'.$uploadfile)){
         echo 'File successfully uploaded!';
 } else {
         echo 'Upload error!';
-}
+};
 
 require 'vendor/autoload.php';
 require 'Models/User.php';
