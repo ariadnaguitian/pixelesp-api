@@ -2,17 +2,6 @@
 ini_set('display_errors',1);
 ini_set('display_startup_errors',1);
 error_reporting(-1);
-header('Access-Control-Allow-Origin: *');
- 
-$location = $_POST['https://api.cloudinary.com/v1_1/hyktxhgfc/image/upload'];
-$uploadfile = $_POST['fileName'];
-$uploadfilename = $_FILES['file']['tmp_name'];
- 
-if(move_uploaded_file($uploadfilename, $location.'/'.$uploadfile)){
-        echo 'File successfully uploaded!';
-} else {
-        echo 'Upload error!';
-};
 
 require 'vendor/autoload.php';
 require 'Models/User.php';
