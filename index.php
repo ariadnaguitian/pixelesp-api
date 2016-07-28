@@ -367,7 +367,7 @@ $app->get('/post/:id', function ($id) use ($app) {
 
 $app->get('/noticias', function () use ($app) {
 	$db = $app->db->getConnection();
-	$images = $db->table('noticias')->select('noticias.*','usuarios.username')
+	$images = $db->table('noticias')->select('noticias.*','usuarios.username','usuarios.imagen')
 	->leftjoin('usuarios', 'usuarios.id', '=', 'noticias.idusuario')
 	->orderby('created_at','desc')
 
@@ -943,7 +943,7 @@ $app->delete('/empleocomments/:id', function ($id) use ($app) {
 
 $app->get('/trabajos', function () use ($app) {
     $db = $app->db->getConnection();
-	$trabajos = $db->table('trabajos')->select('trabajos.*','usuarios.username')
+	$trabajos = $db->table('trabajos')->select('trabajos.*','usuarios.username','usuarios.imagen')
 	->leftjoin('usuarios', 'usuarios.id','=', 'trabajos.idusuario')
 	->orderby('created_at','desc')
 	->get();
