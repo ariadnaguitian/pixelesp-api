@@ -966,6 +966,15 @@ $app->get('/trabajos', function () use ($app) {
 $app->post('/trabajos', function () use ($app) {
 	$input = $app->request->getBody();
 
+$idusuario = $input['idusuario'];
+	if(empty($idusuario)){
+		$app->render(500,array(
+			'error' => TRUE,
+            'msg'   => 'Se requiere descripción',
+        ));
+	}
+
+
 	$Titulo = $input['Titulo'];
 
  	if(empty($Titulo)){
@@ -984,6 +993,7 @@ $app->post('/trabajos', function () use ($app) {
 		
     $trabajo = new Trabajo();
     $trabajo->Titulo = $Titulo;
+     $trabajo->IdUsuario = $idusuario;
     $trabajo->Descripcion = $Descripcion;
  
      
