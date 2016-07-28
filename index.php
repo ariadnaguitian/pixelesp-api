@@ -944,7 +944,7 @@ $app->delete('/empleocomments/:id', function ($id) use ($app) {
 $app->get('/trabajos', function () use ($app) {
     $db = $app->db->getConnection();
 	$trabajos = $db->table('trabajos')->select('trabajos.*','usuarios.username','usuarios.imagen')
-	->leftjoin('usuarios', 'usuarios.id','=', 'trabajos.IdUsuario')
+	->leftjoin('usuarios', 'usuarios.id','=', 'trabajos.idusuario')
 	->orderby('created_at','desc')
 	->get();
 	foreach ($trabajos as $key => $value){
