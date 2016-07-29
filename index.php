@@ -966,7 +966,7 @@ $app->get('/trabajos', function () use ($app) {
 $app->post('/trabajos', function () use ($app) {
 	$input = $app->request->getBody();
 
-	$idusuario = $input['idusuario'];		
+	$idusuario = $input['IdUsuario'];		
 	if(empty($idusuario)){		
 		$app->render(500,array(		
 			'error' => TRUE,		
@@ -990,7 +990,7 @@ $app->post('/trabajos', function () use ($app) {
 	}
 		
     $trabajo = new Trabajo();
-    $noticia->IdUsuario = $idusuario;
+    $trabajo->IdUsuario = $idusuario;
     $trabajo->Titulo = $Titulo;
     $trabajo->Descripcion = $Descripcion;
  
