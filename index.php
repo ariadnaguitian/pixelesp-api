@@ -373,21 +373,7 @@ $app->get('/noticias', function () use ($app) {
 
 	->get();
 
-// 	foreach ($images as $key => $value) {
-// 			$imgfavoritos =  ImgFavoritos::where('idimagen', '=', $value->id)
-// 		->select('imgfavoritos.*','usuarios.username','usuarios.imagen')
-// 		->leftjoin('usuarios', 'usuarios.id', '=', 'imgfavoritos.idusuario')
-// 		->orderby('created_at','desc')
-// 		->get();
-// 		if(empty($imgfavoritos)){
-// 						$result = array();
-// 		} else{
-// 			$result = $imgfavoritos->toArray(); 
-// 		}
-// 		$images[$key]->favoritos = $result;
-// 	}
-// 	$app->render(200,array('data' => $images));
-// });
+
 
 	foreach ($images as $key => $value) {
 		$newscomment =  NewsComments::where('id_noticia', '=', $value->id)
@@ -585,10 +571,6 @@ $app->put('/imagenes/:id', function ($id) use ($app) {
 $app->get('/imagenes/:id', function ($id) use ($app) {
 	$imagen = Image::find($id);
 
-
-
-
-
 	$imgComments =  ImgComments::where('id_imagen', '=', $imagen->id)			
 	->select('imgcomments.*','usuarios.username', 'usuarios.imagen')		
 	->leftjoin('usuarios', 'usuarios.id', '=', 'imgcomments.idusuario')		
@@ -599,6 +581,21 @@ $app->get('/imagenes/:id', function ($id) use ($app) {
  		$result = $imgComments->toArray(); 
  	}
  	$imagen->comentarios = $result;
+
+
+
+	    $imgfavoritos =  Favorito::where('idimagen', '=', $imagen->id)
+		->select('imgfavoritos.*','usuarios.username','usuarios.imagen')
+		->leftjoin('usuarios', 'usuarios.id', '=', 'imgfavoritos.idusuario')
+		->orderby('created_at','desc')
+		->get();
+		if(empty($imgfavoritos)){
+						$result = array();
+		} else{
+			$result = $imgfavoritos->toArray(); 
+		}
+		$imagen->favoritos = $result;
+	
 
 	if(empty($imagen)){
 		$app->render(404,array(
