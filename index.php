@@ -966,7 +966,7 @@ $app->get('/trabajos', function () use ($app) {
 $app->post('/trabajos', function () use ($app) {
 	$input = $app->request->getBody();
 
-	$idusuario = $input['IdUsuario'];		
+	$idusuario = $input['idusuario'];		
 	if(empty($idusuario)){		
 		$app->render(500,array(		
 			'error' => TRUE,		
