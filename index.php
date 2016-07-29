@@ -585,6 +585,9 @@ $app->put('/imagenes/:id', function ($id) use ($app) {
 $app->get('/imagenes/:id', function ($id) use ($app) {
 	$imagen = Image::find($id);
 
+	
+
+	foreach ($images as $key => $value) {
 			$imgfavoritos =  Favorito::where('idimagen', '=', $value->id)
 		->select('imgfavoritos.*','usuarios.username','usuarios.imagen')
 		->leftjoin('usuarios', 'usuarios.id', '=', 'imgfavoritos.idusuario')
@@ -595,8 +598,8 @@ $app->get('/imagenes/:id', function ($id) use ($app) {
 		} else{
 			$result = $imgfavoritos->toArray(); 
 		}
-		$imagen->favoritos = $result;
-	
+		$images[$key]->favoritos = $result;
+	}
 
 
 
