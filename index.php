@@ -586,16 +586,6 @@ $app->get('/imagenes/:id', function ($id) use ($app) {
 	$imagen = Image::find($id);
 
 
-			$imgfavoritos =  Favorito::where('idimagen', '=', $value->id)
-		->select('imgfavoritos.*','usuarios.username','usuarios.imagen')
-		->leftjoin('usuarios', 'usuarios.id', '=', 'imgfavoritos.idusuario')
-		->orderby('created_at','desc')
-		->get();
-		if(empty($imgfavoritos)){
-						$result = array();
-		} else{
-			$result = $imgfavoritos->toArray(); 
-		}
 
 
 
