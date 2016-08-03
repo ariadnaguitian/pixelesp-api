@@ -1490,7 +1490,7 @@ $app->get('/misfavoritosimg', function () use ($app) {
 });
 // ver favorito y borrar 
 
-$app->delete('/delfavoritos', function () use ($app) {
+$app->delete('/imgfavoritos', function () use ($app) {
 
   $token = $app->request->headers->get('auth-token');
 	if(empty($token)){
