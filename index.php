@@ -1491,7 +1491,7 @@ $app->get('/misfavoritosimg', function () use ($app) {
 // ver favoirto y borrar
 
 
-$app->delete('/imgfavoritos', function ($id) use ($app) {
+$app->delete('/imgfavoritos', function () use ($app) {
 
 
   
