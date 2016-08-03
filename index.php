@@ -1492,7 +1492,7 @@ $app->get('/misfavoritosimg', function () use ($app) {
 });
 // ver favorito y borrar 
 
-$app->delete('/favimg/:id', function ($id) use ($app) {
+$app->delete('/favimg/:id', function ($idfav) use ($app) {
 
   $token = $app->request->headers->get('auth-token');
 
@@ -1501,13 +1501,7 @@ $app->delete('/favimg/:id', function ($id) use ($app) {
 	
 	$input = $app->request->getBody();
   
-	  $idimagen = $input['idimagen'];
-		if(empty($idimagen)){
-			$app->render(500,array(
-				'error' => TRUE,
-				'msg'   => 'Id imagen is required',
-			));
-		}
+	$idimagen = Image::find($id);
 	
 	$db = $app->db->getConnection();
 	
@@ -1519,11 +1513,10 @@ $app->delete('/favimg/:id', function ($id) use ($app) {
 	$idfav = $favoritosimg->id;
 	
 	$favoritoimg = Favorito::find($idfav);
-	if(empty($favoritoimg)){
-		$app->render(404,array(
-			'error' => TRUE,
-            'msg'   => 'favorito not found 4',
-        ));
+	if(empty($favoritoimg->toArray())){
+		$result = array();
+	} else{
+		$result = $favoritoimg->toArray(); 
 	}
 	$favoritoimg->delete();
 	$app->render(200);
