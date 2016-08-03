@@ -1488,14 +1488,40 @@ $app->get('/misfavoritosimg', function () use ($app) {
 	
 	$app->render(200,array('data' => $favoritosimg));
 });
-// ver favoirto y borrar
+// ver favorito y borrar 
 
+$app->delete('/delfavoritos', function () use ($app) {
 
-$app->delete('/imgfavoritos', function () use ($app) {
+  $token = $app->request->headers->get('auth-token');
+	if(empty($token)){
+		$app->render(500,array(
+			'error' => TRUE,
+            'msg'   => 'No has iniciado sesión  13',
+        ));
+	}
 
-	$db = $app->db->getConnection();
-
+	$id_user_token = simple_decrypt($token, $app->enc_key);
+	$user = User::find($id_user_token);
+	if(empty($user)){
+		$app->render(500,array(
+			'error' => TRUE,
+            'msg'   => 'No has iniciado sesión  15',
+        ));
+	}
+	
+	
+	$input = $app->request->getBody();
   
+	  $idimagen = $input['idimagen'];
+		if(empty($idimagen)){
+			$app->render(500,array(
+				'error' => TRUE,
+				'msg'   => 'Id imagen is required',
+			));
+		}
+	
+	$db = $app->db->getConnection();
+	
 
     $favoritosimg = $db->table('imgfavoritos')->select('id', 'idusuario', 'idimagen')->where('idusuario', $user->id)->where('idimagen', $idimagen)->get();
 
