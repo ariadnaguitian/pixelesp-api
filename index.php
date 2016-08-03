@@ -1493,22 +1493,9 @@ $app->get('/misfavoritosimg', function () use ($app) {
 $app->delete('/imgfavoritos', function () use ($app) {
 
   $token = $app->request->headers->get('auth-token');
-	if(empty($token)){
-		$app->render(500,array(
-			'error' => TRUE,
-            'msg'   => 'No has iniciado sesión  13',
-        ));
-	}
 
 	$id_user_token = simple_decrypt($token, $app->enc_key);
 	$user = User::find($id_user_token);
-	if(empty($user)){
-		$app->render(500,array(
-			'error' => TRUE,
-            'msg'   => 'No has iniciado sesión  15',
-        ));
-	}
-	
 	
 	$input = $app->request->getBody();
   
