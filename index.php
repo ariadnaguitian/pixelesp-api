@@ -1485,6 +1485,9 @@ $app->get('/misfavoritosimg', function () use ($app) {
 	$db = $app->db->getConnection();
 	
 	$favoritosimg = $db->table('imgfavoritos')->select('id', 'idusuario', 'idimagen')->where('idusuario', $user->id)->where('idimagen', $idimagen)->get();
+
+	 $favoritosimg->idimagen = $idimagen;
+    $favoritosimg->idusuario = $user->id;
 	
 	$app->render(200,array('data' => $favoritosimg));
 });
