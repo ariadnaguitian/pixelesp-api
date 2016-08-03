@@ -1488,23 +1488,13 @@ $app->get('/misfavoritosimg', function () use ($app) {
 	
 	$app->render(200,array('data' => $favoritosimg));
 });
-// ver favorito y borrar 
-$app->delete('/delfavoritos', function () use ($app) {
+// ver favoirto y borrar
 
 
-	
-	$input = $app->request->getBody();
+$app->delete('/imgfavoritos/:id', function ($id) use ($app) {
+
+
   
-	  $idimagen = $input['idimagen'];
-		if(empty($idimagen)){
-			$app->render(500,array(
-				'error' => TRUE,
-				'msg'   => 'Id imagen is required',
-			));
-		}
-	
-	$db = $app->db->getConnection();
-	
 
     $favoritosimg = $db->table('imgfavoritos')->select('id', 'idusuario', 'idimagen')->where('idusuario', $user->id)->where('idimagen', $idimagen)->get();
 
