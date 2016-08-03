@@ -1454,72 +1454,45 @@ $app->post('/imgfavoritos', function () use ($app) {
     $favoritoimg->save();
     $app->render(200,array('data' => $favoritoimg->toArray()));
 });
+
+	
+
 // Traer favorito especifico para borrar
-$app->get('/misfavoritosimg', function () use ($app) {
-  $token = $app->request->headers->get('auth-token');
-	if(empty($token)){
-		$app->render(500,array(
-			'error' => TRUE,
-            'msg'   => 'No has iniciado sesión  12',
-        ));
-	}
-	$id_user_token = simple_decrypt($token, $app->enc_key);
-	$user = User::find($id_user_token);
-	if(empty($user)){
-		$app->render(500,array(
-			'error' => TRUE,
-            'msg'   => 'No has iniciado sesión  15',
-        ));
-	}
-	
-	$input = $app->request->getBody();
-  
-	  $idimagen = $input['idimagen'];
-		if(empty($idimagen)){
-			$app->render(500,array(
-				'error' => TRUE,
-				'msg'   => 'Id imagen is required',
-			));
-		}
-	
-	$db = $app->db->getConnection();
-	
-	$favoritosimg = $db->table('imgfavoritos')->select('id', 'idusuario', 'idimagen')->where('idusuario', $user->id)->where('idimagen', $idimagen)->get();
+$app->get('/imgfavoritos/:id', function ($id) use ($app) {
 
 	
 	
-	$app->render(200,array('data' => $favoritosimg));
+	$favoritosimg = Favorito::find($id);	
+	
+	
+	if(empty($favoritosimg)){		
+		$app->render(404,array(		
+			'error' => TRUE,		
+            'msg'   => 'favoritosimg not found',		
+        ));		
+	}		
+	$app->render(200,array('data' => $favoritosimg->toArray()));	
 });
 // ver favorito y borrar 
 
-$app->delete('/favimg/:id', function ($idfav) use ($app) {
-
-  $token = $app->request->headers->get('auth-token');
-
-	$id_user_token = simple_decrypt($token, $app->enc_key);
-	$user = User::find($id_user_token);
+$app->delete('/imgfavoritos/:id', function ($id) use ($app) {
 	
-	$input = $app->request->getBody();
+	$favoritosimg = Favorito::find($id);		
+	if(empty($favoritosimg)){		
+		$app->render(404,array(		
+			'error' => TRUE,		
+            'msg'   => 'favorito not found',		
+        ));		
+	}		
+	$favoritosimg->delete();		
+	$app->render(200);		
+
   
-	$idimagen = Image::find($id);
 	
-	$db = $app->db->getConnection();
 	
 
-    $favoritosimg = $db->table('imgfavoritos')->select('id', 'idusuario', 'idimagen')->where('idusuario', $user->id)->where('idimagen', $idimagen)->get();
-
-
 	
-	$idfav = $favoritosimg->id;
-	
-	$favoritoimg = Favorito::find($idfav);
-	if(empty($favoritoimg->toArray())){
-		$result = array();
-	} else{
-		$result = $favoritoimg->toArray(); 
-	}
-	$favoritoimg->delete();
-	$app->render(200);
+
 		
 });
 // listar mis favoritos
