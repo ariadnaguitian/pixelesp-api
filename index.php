@@ -1493,6 +1493,7 @@ $app->get('/misfavoritosimg', function () use ($app) {
 
 $app->delete('/imgfavoritos', function () use ($app) {
 
+	$db = $app->db->getConnection();
 
   
 
