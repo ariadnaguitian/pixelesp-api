@@ -1538,40 +1538,40 @@ $app->get('/favoritosusuario/:id', function ($id) use ($app) {
 	$app->render(200,array('data' => $favoritosimg));
 });
 
-$app->get('/misfavoritosimglist', function () use ($app) {
+// $app->get('/misfavoritosimglist', function () use ($app) {
 	
-	$token = $app->request->headers->get('auth-token');
-	if(empty($token)){
-		$app->render(500,array(
-			'error' => TRUE,
-            'msg'   => 'No has iniciado sesión ',
-        ));
-	}
-	$id_user_token = simple_decrypt($token, $app->enc_key);
-	$user = User::find($id_user_token);
-	if(empty($user)){
-		$app->render(500,array(
-			'error' => TRUE,
-            'msg'   => 'No has iniciado sesión ',
-        ));
-	}
+// 	$token = $app->request->headers->get('auth-token');
+// 	if(empty($token)){
+// 		$app->render(500,array(
+// 			'error' => TRUE,
+//             'msg'   => 'No has iniciado sesión ',
+//         ));
+// 	}
+// 	$id_user_token = simple_decrypt($token, $app->enc_key);
+// 	$user = User::find($id_user_token);
+// 	if(empty($user)){
+// 		$app->render(500,array(
+// 			'error' => TRUE,
+//             'msg'   => 'No has iniciado sesión ',
+//         ));
+// 	}
 	
 	
-	$db = $app->db->getConnection();
+// 	$db = $app->db->getConnection();
 
 
 	
-	$favoritosimg = $db->table('imgfavoritos')->select('id', 'idusuario', 'idimagen')->where('idusuario', $user->id)->get();
-	foreach ($favoritosimg as $key => $favoritosimg) {
+// 	$favoritosimg = $db->table('imgfavoritos')->select('id', 'idusuario', 'idimagen')->where('idusuario', $user->id)->get();
+// 	foreach ($favoritosimg as $key => $favoritosimg) {
 
 
-		$imagenes = $db->table('imagenes')->select('id', 'IdUsuario', 'Titulo', 'Descripcion', 'Imagen', 'Previa')->where('id', $favoritosimg->idimagen)->get();
+// 		$imagenes = $db->table('imagenes')->select('id', 'IdUsuario', 'Titulo', 'Descripcion', 'Imagen', 'Previa')->where('id', $favoritosimg->idimagen)->get();
 		
-		$favoritosimg[$key]->imagenes = $imagenes;
-	}
+// 		$favoritosimg[$key]->imagenes = $imagenes;
+// 	}
 		
-	$app->render(200,array('data' => $favoritosimg));
-});
+// 	$app->render(200,array('data' => $favoritosimg));
+// });
 
 
 
