@@ -394,6 +394,8 @@ $app->get('/noticiasusuario/:id', function ($id) use ($app) {
 
 	$db = $app->db->getConnection();
 		$usuario = User::find($id);
+	$usuario = $db->table('usuario')->select()			
+	->get();
 
 
 $noticias =  Noticia::where('idusuario', '=', $usuario->id)->get();
@@ -405,9 +407,6 @@ $noticias =  Noticia::where('idusuario', '=', $usuario->id)->get();
  	$usuario->noticias = $result;
 
 
-$noticias = $db->table('noticias')->select('noticias.*','usuarios.username')			
-	->leftjoin('usuarios', 'usuarios.id', '=', 'noticias.idusuario')		
-	->orderby('created_at','desc')->get();
 	
 
 	$app->render(200,array('data' => $noticias));
