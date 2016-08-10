@@ -394,11 +394,13 @@ $app->get('/noticiasusuario/:id', function ($id) use ($app) {
 
 	$db = $app->db->getConnection();
 		$usuario = User::find($id);
-	$usuario = $db->table('usuario')->select()			
-	->get();
 
 
-$noticias =  Noticia::where('idusuario', '=', $usuario->id)->get();
+
+$noticias =  Noticia::where('idusuario', '=', $usuario->id)
+->leftjoin('usuarios', 'usuarios.id', '=', 'noticias.idusuario')
+
+->get();
  	if(empty($noticias->toArray())){
  		$result = array();
  	} else{
