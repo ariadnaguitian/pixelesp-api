@@ -343,26 +343,7 @@ $app->delete('/usuarios/:id', function ($id) use ($app) {
 });
 
 
-$app->get('/post/:id', function ($id) use ($app) {
- 	$db = $app->db->getConnection();
- 	$post = Image::find($id);
- 	if(empty($post)){
- 		$app->render(404,array(
- 			'error' => TRUE,
-             'msg'   => 'post not found',
-         ));
- 	}
- 
- 	/*
- 	$post->user = User::find($post->id_usuario);
- 	*/
- 
- 	$post->user = $db->table('usuarios')->select('id','name', 'email','username')->where('id', $post->id_usuario)->get();
- 
- 	unset($post->id_usuario);
- 	
- 	$app->render(200,array('data' => $post->toArray()));
- });
+
  
 
 $app->get('/noticias', function () use ($app) {
@@ -496,7 +477,26 @@ $app->delete('/noticias/:id', function ($id) use ($app) {
 	$noticia->delete();
 	$app->render(200);
 });
-
+$app->get('/noticias/:idu', function ($idu) use ($app) {
+ 	$db = $app->db->getConnection();
+ 	$noticia = Noticia::find($idu);
+ 	if(empty($noticia)){
+ 		$app->render(404,array(
+ 			'error' => TRUE,
+             'msg'   => 'noticia not found',
+         ));
+ 	}
+ 
+ 	/*
+ 	$noticia->user = User::find($noticia->id_usuario);
+ 	*/
+ 
+ 	$noticia->user = $db->table('usuarios')->select('id','name', 'email','username')->where('id', $noticia->id_usuario)->get();
+ 
+ 	unset($noticia->id_usuario);
+ 	
+ 	$app->render(200,array('data' => $noticia->toArray()));
+ });
 
 $app->get('/imagenes', function () use ($app) {
 	$db = $app->db->getConnection();
