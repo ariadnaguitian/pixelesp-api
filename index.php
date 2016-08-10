@@ -395,28 +395,6 @@ $app->get('/noticiasusuario/:id', function ($id) use ($app) {
 		$usuario = User::find($id);
 
 
-
-$noticias =  Noticia::where('idusuario', '=', $usuario->id)
-->leftjoin('usuarios', 'usuarios.id', '=', 'noticias.idusuario')
-
-->get();
- 	if(empty($noticias->toArray())){
- 		$result = array();
- 	} else{
- 		$result = $noticias->toArray(); 
- 	}
- 	$usuario->noticias = $result;
-
-
-	
-
-	$app->render(200,array('data' => $noticias));
-
-});	$db = $app->db->getConnection();
-		$usuario = User::find($id);
-
-
-
 $noticias =  Noticia::where('idusuario', '=', $usuario->id)
 ->leftjoin('usuarios', 'usuarios.id', '=', 'noticias.idusuario')
 
