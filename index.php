@@ -391,8 +391,10 @@ $app->get('/noticias', function () use ($app) {
 	$app->render(200,array('data' => $images));
 });
 $app->get('/noticiasusuario/:id', function ($id) use ($app) {
+
 	$db = $app->db->getConnection();
 		$usuario = User::find($id);
+
 
 
 $noticias =  Noticia::where('idusuario', '=', $usuario->id)
@@ -410,6 +412,7 @@ $noticias =  Noticia::where('idusuario', '=', $usuario->id)
 	
 
 	$app->render(200,array('data' => $noticias));
+});
 
 $app->post('/noticias', function () use ($app) {
 	$input = $app->request->getBody();
@@ -1522,13 +1525,15 @@ $app->get('/favoritosusuario/:id', function ($id) use ($app) {
 	$db = $app->db->getConnection();
 		$usuario = User::find($id);
 	
-$images = $db->table('imgfavoritos')->select('imgfavoritos.*','usuarios.username','usuarios.imagen')
-	->leftjoin('usuarios', 'usuarios.id', '=', 'imgfavoritos.idusuario')
-	->orderby('created_at','desc')
 
-	->get();
+	$favoritosimg = $db->table('imgfavoritos')->select('id', 'idusuario', 'idimagen')->where('idusuario', $usuario->id)->get();
+	foreach ($favoritosimg as $key => $favoritosimg) {
 
 
+		$imagenes = $db->table('imagenes')->select('id', 'IdUsuario', 'Titulo', 'Descripcion', 'Imagen', 'Previa')->where('id', $favoritosimg->idimagen)->get();
+		
+		$favoritosimg[$key]->imagenes = $imagenes;
+	}
 	foreach ($images as $key => $value) {
 		$imgfavoritos =  Favorito::where('id_noticia', '=', $value->id)
 		->select('imgfavoritos.*','usuarios.username','usuarios.imagen')
@@ -1542,7 +1547,7 @@ $images = $db->table('imgfavoritos')->select('imgfavoritos.*','usuarios.username
 		}
 		$images[$key]->imgfavoritos = $result;
 	}
-		$app->render(200,array('data' => $imgfavoritos));
+	$app->render(200,array('data' => $images));	$app->render(200,array('data' => $favoritosimg));
 });
 
 $app->get('/misfavoritosimglist', function () use ($app) {
