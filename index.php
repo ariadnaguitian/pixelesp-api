@@ -405,7 +405,10 @@ $noticias =  Noticia::where('idusuario', '=', $usuario->id)->get();
  	$usuario->noticias = $result;
 
 
-
+$noticias = $db->table('noticias')->select('noticias.*','usuarios.username')			
+	->leftjoin('usuarios', 'usuarios.id', '=', 'noticias.idusuario')		
+	->orderby('created_at','desc')->get();
+	
 
 	$app->render(200,array('data' => $noticias));
 });
