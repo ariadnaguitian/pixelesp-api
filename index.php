@@ -1531,10 +1531,6 @@ $images = $db->table('imgfavoritos')->select('imgfavoritos.*','usuarios.username
 
 	->get();
 
-	$db = $app->db->getConnection();
-		$usuario = User::find($id);
-
-
 
 	foreach ($images as $key => $value) {
 		$imgfavoritos =  Favorito::where('id_noticia', '=', $value->id)
