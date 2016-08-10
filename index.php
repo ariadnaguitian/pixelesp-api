@@ -1518,7 +1518,26 @@ $app->delete('/imgfavoritos/:id', function ($id) use ($app) {
 
 		
 });
+
 // listar mis favoritos
+$app->get('/favoritosusuario/:id', function ($id) use ($app) {
+
+	$db = $app->db->getConnection();
+		$usuario = User::find($id);
+	
+
+	$favoritosimg = $db->table('imgfavoritos')->select('id', 'idusuario', 'idimagen')->where('idusuario', $usurio->id)->get();
+	foreach ($favoritosimg as $key => $favoritosimg) {
+
+
+		$imagenes = $db->table('imagenes')->select('id', 'IdUsuario', 'Titulo', 'Descripcion', 'Imagen', 'Previa')->where('id', $favoritosimg->idimagen)->get();
+		
+		$favoritosimg[$key]->imagenes = $imagenes;
+	}
+
+	$app->render(200,array('data' => $favoritosimg));
+});
+
 $app->get('/misfavoritosimglist', function () use ($app) {
 	
 	$token = $app->request->headers->get('auth-token');
