@@ -390,15 +390,21 @@ $app->get('/noticias', function () use ($app) {
 	}
 	$app->render(200,array('data' => $images));
 });
-$app->get('/noticiasusuario', function () use ($app) {
+$app->get('/noticiasusuario/:id', function ($id) use ($app) {
+
 	$db = $app->db->getConnection();
-	
+		$usuario = User::find($id);
 
-	$noticias = $db->table('noticias')->select()
-	->leftjoin('usuarios', 'usuarios.id', '=', 'noticias.idusuario')
-	->orderby('created_at','desc')
 
-	->get();
+$noticias =  Noticia::where('idusuario', '=', $usuario->id)->get();
+ 	if(empty($noticias->toArray())){
+ 		$result = array();
+ 	} else{
+ 		$result = $noticias->toArray(); 
+ 	}
+ 	$usuario->noticias = $result;
+
+
 
 
 	$app->render(200,array('data' => $noticias));
