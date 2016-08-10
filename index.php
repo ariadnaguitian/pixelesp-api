@@ -1526,7 +1526,7 @@ $app->get('/favoritosusuario/:id', function ($id) use ($app) {
 		$usuario = User::find($id);
 	
 
-	$favoritosimg = $db->table('imgfavoritos')->select('id', 'idusuario', 'idimagen')->where('idusuario', $usurio->id)->get();
+	$favoritosimg = $db->table('imgfavoritos')->select('id', 'idusuario', 'idimagen')->where('idusuario', $usuario->id)->get();
 	foreach ($favoritosimg as $key => $favoritosimg) {
 
 
