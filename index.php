@@ -392,7 +392,8 @@ $app->get('/noticias', function () use ($app) {
 });
 $app->get('/noticiasusuario/:id', function ($id) use ($app) {
 
-	$db = $app->db->getConnection();
+
+});	$db = $app->db->getConnection();
 		$usuario = User::find($id);
 
 
@@ -412,7 +413,6 @@ $noticias =  Noticia::where('idusuario', '=', $usuario->id)
 	
 
 	$app->render(200,array('data' => $noticias));
-});
 
 $app->post('/noticias', function () use ($app) {
 	$input = $app->request->getBody();
@@ -1525,8 +1525,57 @@ $app->get('/favoritosusuario/:id', function ($id) use ($app) {
 	$db = $app->db->getConnection();
 		$usuario = User::find($id);
 	
+$images = $db->table('imgfavoritos')->select('imgfavoritos.*','usuarios.username','usuarios.imagen')
+	->leftjoin('usuarios', 'usuarios.id', '=', 'imgfavoritos.idusuario')
+	->orderby('created_at','desc')
 
-	$favoritosimg = $db->table('imgfavoritos')->select('id', 'idusuario', 'idimagen')->where('idusuario', $usuario->id)->get();
+	->get();
+
+	$db = $app->db->getConnection();
+		$usuario = User::find($id);
+
+
+
+	foreach ($images as $key => $value) {
+		$imgfavoritos =  Favorito::where('id_noticia', '=', $value->id)
+		->select('imgfavoritos.*','usuarios.username','usuarios.imagen')
+		->leftjoin('usuarios', 'usuarios.id', '=', 'imgfavoritos.idusuario')
+		->orderby('created_at','desc')
+		->get();
+		if(empty($imgfavoritos)){
+			$result = array();
+		} else{
+			$result = $imgfavoritos->toArray(); 
+		}
+		$images[$key]->imgfavoritos = $result;
+	}
+		$app->render(200,array('data' => $imgfavoritos));
+});
+
+$app->get('/misfavoritosimglist', function () use ($app) {
+	
+	$token = $app->request->headers->get('auth-token');
+	if(empty($token)){
+		$app->render(500,array(
+			'error' => TRUE,
+            'msg'   => 'No has iniciado sesión ',
+        ));
+	}
+	$id_user_token = simple_decrypt($token, $app->enc_key);
+	$user = User::find($id_user_token);
+	if(empty($user)){
+		$app->render(500,array(
+			'error' => TRUE,
+            'msg'   => 'No has iniciado sesión ',
+        ));
+	}
+	
+	
+	$db = $app->db->getConnection();
+
+
+	
+	$favoritosimg = $db->table('imgfavoritos')->select('id', 'idusuario', 'idimagen')->where('idusuario', $user->id)->get();
 	foreach ($favoritosimg as $key => $favoritosimg) {
 
 
@@ -1534,44 +1583,9 @@ $app->get('/favoritosusuario/:id', function ($id) use ($app) {
 		
 		$favoritosimg[$key]->imagenes = $imagenes;
 	}
-
+		
 	$app->render(200,array('data' => $favoritosimg));
 });
-
-// $app->get('/misfavoritosimglist', function () use ($app) {
-	
-// 	$token = $app->request->headers->get('auth-token');
-// 	if(empty($token)){
-// 		$app->render(500,array(
-// 			'error' => TRUE,
-//             'msg'   => 'No has iniciado sesión ',
-//         ));
-// 	}
-// 	$id_user_token = simple_decrypt($token, $app->enc_key);
-// 	$user = User::find($id_user_token);
-// 	if(empty($user)){
-// 		$app->render(500,array(
-// 			'error' => TRUE,
-//             'msg'   => 'No has iniciado sesión ',
-//         ));
-// 	}
-	
-	
-// 	$db = $app->db->getConnection();
-
-
-	
-// 	$favoritosimg = $db->table('imgfavoritos')->select('id', 'idusuario', 'idimagen')->where('idusuario', $user->id)->get();
-// 	foreach ($favoritosimg as $key => $favoritosimg) {
-
-
-// 		$imagenes = $db->table('imagenes')->select('id', 'IdUsuario', 'Titulo', 'Descripcion', 'Imagen', 'Previa')->where('id', $favoritosimg->idimagen)->get();
-		
-// 		$favoritosimg[$key]->imagenes = $imagenes;
-// 	}
-		
-// 	$app->render(200,array('data' => $favoritosimg));
-// });
 
 
 
