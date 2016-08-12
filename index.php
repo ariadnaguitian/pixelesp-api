@@ -14,6 +14,7 @@ require 'Models/newscomment.php';
 require 'Models/empleocomment.php';
 require 'Models/imgcomment.php';
 require 'Models/trabajo.php';
+require 'Models/Mensaje.php';
 
 
 
@@ -1640,11 +1641,30 @@ $app->get('/misfavoritosimglist', function () use ($app) {
 	$app->render(200,array('data' => $favoritosimg));
 });
 
+
+// mensajes :
+
 $app->post('/crearmensaje/:id_destino', function ($id_destino) use ($app) {
 		
-		$input = $app->request->getBody();
+		 $token = $app->request->headers->get('auth-token');
+	if(empty($token)){
+		$app->render(500,array(
+			'error' => TRUE,
+            'msg'   => 'No has iniciado sesión ',
+        ));
+	}
+	$id_user_token = simple_decrypt($token, $app->enc_key);
+	$user = User::find($id_user_token);
+	if(empty($user)){
+		$app->render(500,array(
+			'error' => TRUE,
+            'msg'   => 'No has iniciado sesión ',
+        ));
+	}
+
+	$input = $app->request->getBody();
 		
-		$id_origen = $input['id_origen'];
+		$id_origen = $user->id;
 		$asunto = $input['asunto'];		
 		$mensaje = $input['mensaje'];
 		
@@ -1667,6 +1687,56 @@ $app->post('/crearmensaje/:id_destino', function ($id_destino) use ($app) {
 		$msg->save();
 		
 		$app->render(200);
+	});
+
+$app->get('/mensaje/:id', function ($id) use ($app) {
+		$db = $app->db->getConnection();
+		
+		$mensaje 	= $db->table('mensajes') 
+						->join('usuarios', 'mensajes.from', '=', 'usuarios.id')
+						->select('mensajes.*', 'usuarios.name')
+						->where('mensajes.id', '=', $id)
+						->get();
+					
+		if(empty($mensaje)){
+			$app->render(404,array(
+				'error' => TRUE,
+				'msg'   => 'El mensaje no existe.',
+		));}
+			
+		$app->render(200,array('data' => $mensaje));
+	});
+
+$app->get('/listarmensajes/:idusuario', function ($idusuario) use ($app) {
+		$db = $app->db->getConnection();
+		
+		$mensajesrecibidos 	= $db->table('mensajes') 
+								->join('usuarios', 'mensajes.from', '=', 'usuarios.id')
+								->select('mensajes.*', 'usuarios.name')
+								->where('mensajes.to', '=', $idusuario)
+								->orderBy('created_at', 'desc')
+								->get();
+		
+		$app->render(200,array('data' => $mensajesrecibidos));
+	});
+
+$app->delete('/borrarmensaje/:id', function ($id) use ($app) {
+		
+		$db = $app->db->getConnection();
+		
+		$mensaje = Mensaje::find($id);
+			
+		if(empty($mensaje)){
+			$app->render(404,array(
+				'error' => TRUE,
+				'msg'   => 'El mensaje no existe.',
+			));
+		}
+		
+		$mensaje->delete();
+		
+		$app->render(200);
+		
 	});
 
 $app->run();
