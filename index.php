@@ -14,7 +14,7 @@ require 'Models/newscomment.php';
 require 'Models/empleocomment.php';
 require 'Models/imgcomment.php';
 require 'Models/trabajo.php';
-require 'Models/Mensaje.php';
+require 'Models/trabajo.php';
 
 
 
@@ -1646,25 +1646,9 @@ $app->get('/misfavoritosimglist', function () use ($app) {
 
 $app->post('/crearmensaje/:id_destino', function ($id_destino) use ($app) {
 		
-		 $token = $app->request->headers->get('auth-token');
-	if(empty($token)){
-		$app->render(500,array(
-			'error' => TRUE,
-            'msg'   => 'No has iniciado sesión ',
-        ));
-	}
-	$id_user_token = simple_decrypt($token, $app->enc_key);
-	$user = User::find($id_user_token);
-	if(empty($user)){
-		$app->render(500,array(
-			'error' => TRUE,
-            'msg'   => 'No has iniciado sesión ',
-        ));
-	}
-
-	$input = $app->request->getBody();
+		$input = $app->request->getBody();
 		
-		$id_origen = $user->id;
+		$id_origen = $input['id_origen'];
 		$asunto = $input['asunto'];		
 		$mensaje = $input['mensaje'];
 		
