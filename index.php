@@ -1649,6 +1649,7 @@ $app->post('/crearmensaje/:id_destino', function ($id_destino) use ($app) {
 		$input = $app->request->getBody();
 		
 		$id_origen = $input['id_origen'];
+		$id_destino = $input['id_destino'];
 		$asunto = $input['asunto'];		
 		$mensaje = $input['mensaje'];
 		
