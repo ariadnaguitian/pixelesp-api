@@ -14,7 +14,7 @@ require 'Models/newscomment.php';
 require 'Models/empleocomment.php';
 require 'Models/imgcomment.php';
 require 'Models/trabajo.php';
-require 'Models/trabajo.php';
+require 'Models/Mensaje.php';
 
 
 
