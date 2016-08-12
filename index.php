@@ -1555,6 +1555,26 @@ $app->delete('/imgfavoritos/:id', function ($id) use ($app) {
 	});
 
 // listar mis favoritos
+$app->get('/listarfavoritos/:idusuario', function ($idusuario) use ($app) {
+		$db = $app->db->getConnection();
+		
+		//Se hace un JOIN de tablas.
+		$imagenes = $db->table('imagenes')     
+						->join('imgfavoritos', 'imgfavoritos.idimagen', '=', 'imagenes.id')
+						->select('imagenes.*')
+						->where('imgfavoritos.idusuario', '=', $idusuario)
+						->get();
+								
+		if(empty($imagenes)){
+			$app->render(500,array(
+				'error' => false,
+				'msg'   => 'No tenés imagenes Favoritas.',
+		));}
+		
+		$app->render(200,array('data' => $imagenes));
+	});
+
+
 $app->get('/favoritosusuario/:id', function ($id) use ($app) {
 
 	$db = $app->db->getConnection();
