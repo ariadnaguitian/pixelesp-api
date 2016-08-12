@@ -1533,7 +1533,23 @@ $app->delete('/imgfavoritos/:id', function ($id) use ($app) {
 		));}
 		
 		
+		$dislikear = $db->table('imgfavoritos')
+						->where('idusuario', $user->id)
+						->where('idimagen', $id)
+						->delete();
 		
+		
+		$imagen = Image::find($id);
+		
+		if(empty($imagen)){
+			$app->render(404,array(
+				'error' => TRUE,
+				'msg'   => 'Imagen no encontrada.',
+		));}
+		
+		
+		
+		$imagen->save();
 		
 		$app->render(200);
 	});
