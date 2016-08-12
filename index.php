@@ -1498,22 +1498,7 @@ $app->get('/imgfavoritos/:id', function ($id) use ($app) {
 });
 // ver favorito y borrar 
 
-$app->delete('/imgfavoritos/:id', function ($id) use ($app) {
-	
-	$favoritosimg = Favorito::find($id);		
-	if(empty($favoritosimg)){		
-		$app->render(404,array(		
-			'error' => TRUE,		
-            'msg'   => 'favorito not found',		
-        ));		
-	}		
-	$favoritosimg->delete();		
-	$app->render(200);		
 
-  
-	
-		
-});
 
 $app->delete('/imgfavoritos/:id/:idusuario', function ($id, $idusuario) use ($app) {
 		
