@@ -1512,12 +1512,47 @@ $app->delete('/imgfavoritos/:id', function ($id) use ($app) {
 
   
 	
-	
-
-	
-
 		
 });
+
+$app->delete('/imgfavoritos/:id/:idusuario', function ($id, $idusuario) use ($app) {
+		
+		$db = $app->db->getConnection();
+		
+		
+		$esfav = $db->table('imgfavoritos')
+					->select()
+					->where('idusuario', $idusuario)
+					->where('idimagen', $id)
+					->get();
+		
+		if(empty($esfav)){
+			$app->render(500,array(
+				'error' => TRUE,
+				'msg'   => 'Esta imagen no se encuentra en tus favoritos.',
+		));}
+		
+		
+		$dislikear = $db->table('imgfavoritos')
+						->where('idusuario', $idusuario)
+						->where('idimagen', $id)
+						->delete();
+		
+		
+		$post = Image::find($id);
+		
+		if(empty($post)){
+			$app->render(404,array(
+				'error' => TRUE,
+				'msg'   => 'Imagen no encontrada.',
+		));}
+		
+		
+		$post->imgfavoritos--;
+		$post->save();
+		
+		$app->render(200);
+	});
 
 // listar mis favoritos
 $app->get('/favoritosusuario/:id', function ($id) use ($app) {
