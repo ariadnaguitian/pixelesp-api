@@ -1500,14 +1500,29 @@ $app->get('/imgfavoritos/:id', function ($id) use ($app) {
 
 
 
-$app->delete('/imgfavoritos/:id/:idusuario', function ($id, $idusuario) use ($app) {
-		
+$app->delete('/imgfavoritos/:id', function ($id) use ($app) {
+		  $token = $app->request->headers->get('auth-token');
+	if(empty($token)){
+		$app->render(500,array(
+			'error' => TRUE,
+            'msg'   => 'No has iniciado sesión ',
+        ));
+	}
+	$id_user_token = simple_decrypt($token, $app->enc_key);
+	$user = User::find($id_user_token);
+	if(empty($user)){
+		$app->render(500,array(
+			'error' => TRUE,
+            'msg'   => 'No has iniciado sesión ',
+        ));
+	}
+
 		$db = $app->db->getConnection();
 		
 		
 		$esfav = $db->table('imgfavoritos')
 					->select()
-					->where('idusuario', $idusuario)
+					->where('idusuario', $user->id)
 					->where('idimagen', $id)
 					->get();
 		
@@ -1519,7 +1534,7 @@ $app->delete('/imgfavoritos/:id/:idusuario', function ($id, $idusuario) use ($ap
 		
 		
 		$dislikear = $db->table('imgfavoritos')
-						->where('idusuario', $idusuario)
+						->where('idusuario', $user->id)
 						->where('idimagen', $id)
 						->delete();
 		
