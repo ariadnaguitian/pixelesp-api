@@ -1651,7 +1651,7 @@ $app->post('/crearmensaje/:id_destino', function ($id_destino) use ($app) {
 		$id_origen = $input['id_origen'];
 		$asunto = $input['asunto'];		
 		$mensaje = $input['mensaje'];
-		
+
 		
 		if(empty($asunto)){
 			$app->render(500,array(
@@ -1697,7 +1697,7 @@ $app->get('/listarmensajes/:idusuario', function ($idusuario) use ($app) {
 		
 		$mensajesrecibidos 	= $db->table('mensajes') 
 								->join('usuarios', 'mensajes.from', '=', 'usuarios.id')
-								->select('mensajes.*', 'usuarios.name')
+								->select('mensajes.*', 'usuarios.*')
 								->where('mensajes.to', '=', $idusuario)
 								->orderBy('created_at', 'desc')
 								->get();
