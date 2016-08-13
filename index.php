@@ -1651,6 +1651,7 @@ $app->post('/crearmensaje/:id_destino', function ($id_destino) use ($app) {
 		$id_origen = $input['id_origen'];
 		$asunto = $input['asunto'];		
 		$mensaje = $input['mensaje'];
+		$id_destino = $input['id_destino'];
 		
 		if(empty($asunto)){
 			$app->render(500,array(
