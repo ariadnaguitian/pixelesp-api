@@ -506,6 +506,8 @@ $newscomments =  NewsComments::where('id_noticia', '=', $noticia->id)->get();
         ));
 	}
 	$app->render(200,array('data' => $noticia->toArray()));
+		$noticia->visitas++;
+    $noticia->save();
 });
 
 
