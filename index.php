@@ -1681,7 +1681,7 @@ $app->get('/mensaje/:id', function ($id) use ($app) {
 		
 		$mensaje 	= $db->table('mensajes') 
 						->join('usuarios', 'mensajes.from', '=', 'usuarios.id')
-						->select('mensajes.*', 'usuarios.name')
+						->select('mensajes.*', 'usuarios.name', 'usuarios.imagen')
 						->where('mensajes.id', '=', $id)
 						->get();
 					
