@@ -597,24 +597,18 @@ $app->put('/imagenes/:id', function ($id) use ($app) {
 $app->get('/imagenes/:id', function ($id) use ($app) {
 
 
-		
-// $imagen = Image::
-// ->leftjoin('usuarios', 'imagenes.IdUsuario', '=', 'usuarios.id')
-// 						->select('imagenes.*', 'usuarios.name', 'usuarios.username')						
-// 						->get();
+		$imagen = Image::find($id);	
+ $imagen = Image::where('imagenes.id', '=',$imagen->id $id);
+->leftjoin('usuarios', 'imagenes.IdUsuario', '=', 'usuarios.id')
+ 						->select('imagenes.*', 'usuarios.name', 'usuarios.username')						
+						->get();
 		
 	
-	$db = $app->db->getConnection();
-	$imagen = $db->table('imagenes')->select('imagenes.*','usuarios.username','usuarios.imagen')
-	->where('imagenes.id', '=',	$imagen-> $id)
-	->leftjoin('usuarios', 'usuarios.id', '=', 'imagenes.IdUsuario')
-	->orderby('created_at','desc')
-
-	->get();
+	
 
 
 
-	$imagen = Image::find($id);
+
 	
 
 	$imgComments =  ImgComments::where('id_imagen', '=', $imagen->id)			
