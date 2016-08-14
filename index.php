@@ -598,7 +598,7 @@ $app->get('/imagenes/:id', function ($id) use ($app) {
 
 
 	
-$imagen = Image::where(('imagenes.id', '=', $id));
+$imagen = Image::where('imagenes.id', '=', $id);
 ->leftjoin('usuarios', 'imagenes.IdUsuario', '=', 'usuarios.id')
 						->select('imagenes.*', 'usuarios.name', 'usuarios.username')						
 						->get();
