@@ -598,11 +598,11 @@ $app->get('/imagenes/:id', function ($id) use ($app) {
 
 
 		
-	$imagen = Image::find($id);
+
 
 		$db = $app->db->getConnection();
 		
-		$imagen 	= $db->table('imagenes') 
+		$imagen	= $db->table('imagenes') 
 						->join('usuarios', 'imagenes.IdUsuario', '=', 'usuarios.id')
 						->select('imagenes.*', 'usuarios.name', 'usuarios.username')
 						->where('imagenes.id', '=', $id)
