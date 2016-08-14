@@ -598,7 +598,7 @@ $app->get('/imagenes/:id', function ($id) use ($app) {
 
 
 		
-// $imagen = Image::where('imagenes.id', '=', $id);
+// $imagen = Image::
 // ->leftjoin('usuarios', 'imagenes.IdUsuario', '=', 'usuarios.id')
 // 						->select('imagenes.*', 'usuarios.name', 'usuarios.username')						
 // 						->get();
@@ -606,6 +606,7 @@ $app->get('/imagenes/:id', function ($id) use ($app) {
 	
 	$db = $app->db->getConnection();
 	$imagen = $db->table('imagenes')->select('imagenes.*','usuarios.username','usuarios.imagen')
+	->where('imagenes.id', '=', $id);
 	->leftjoin('usuarios', 'usuarios.id', '=', 'imagenes.IdUsuario')
 	->orderby('created_at','desc')
 
