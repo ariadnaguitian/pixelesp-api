@@ -527,7 +527,7 @@ $app->delete('/noticias/:id', function ($id) use ($app) {
 $app->get('/imagenes', function () use ($app) {
 	$db = $app->db->getConnection();
 $imagenes = $db->table('imagenes')->select('imagenes.*','usuarios.username')			
-	->leftjoin('usuarios', 'usuarios.id', '=', 'imagenes.idusuario', 'imagenes.username')		
+	->leftjoin('usuarios', 'usuarios.id', 'usuarios.username', '=', 'imagenes.idusuario')		
 	->orderby('created_at','desc')->get();
 	
 	$app->render(200,array('data' => $imagenes));
