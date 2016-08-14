@@ -606,7 +606,7 @@ $app->get('/imagenes/:id', function ($id) use ($app) {
 	
 	$db = $app->db->getConnection();
 	$imagen = $db->table('imagenes')->select('imagenes.*','usuarios.username','usuarios.imagen')
-	->where('imagenes.id', '=', $id);
+	->where('imagenes.id', '=', $id)
 	->leftjoin('usuarios', 'usuarios.id', '=', 'imagenes.IdUsuario')
 	->orderby('created_at','desc')
 
