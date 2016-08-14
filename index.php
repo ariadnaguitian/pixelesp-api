@@ -599,13 +599,14 @@ $app->get('/imagenes/:id', function ($id) use ($app) {
 
 		
 	
+	
 
 		$db = $app->db->getConnection();
 		
 		$imagen	= $db->table('imagenes') 
-						->join('usuarios', 'imagenes.IdUsuario', '=', 'usuarios.id')
+						->leftjoin('usuarios', 'imagenes.IdUsuario', '=', 'usuarios.id')
 						->select('imagenes.*', 'usuarios.name', 'usuarios.username')
-						->where('imagenes.id', '=', $id)
+					
 						->get();
 $imagen = Image::find($id);
 	$imgComments =  ImgComments::where('id_imagen', '=', $imagen->id)			
