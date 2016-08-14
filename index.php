@@ -598,7 +598,7 @@ $app->get('/imagenes/:id', function ($id) use ($app) {
 
 
 		
-
+	
 
 		$db = $app->db->getConnection();
 		
@@ -607,7 +607,7 @@ $app->get('/imagenes/:id', function ($id) use ($app) {
 						->select('imagenes.*', 'usuarios.name', 'usuarios.username')
 						->where('imagenes.id', '=', $id)
 						->get();
-
+$imagen = Image::find($id);
 	$imgComments =  ImgComments::where('id_imagen', '=', $imagen->id)			
 	
 	->leftjoin('usuarios', 'usuarios.id', '=', 'imgcomments.idusuario')		
