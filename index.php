@@ -597,6 +597,16 @@ $app->put('/imagenes/:id', function ($id) use ($app) {
 $app->get('/imagenes/:id', function ($id) use ($app) {
 
 
+$imagen = Image::find($id);
+	$imagenusuario =  User::where('id', '=', $imagen->id)->select()->get();
+ 	if(empty($imagenusuario->toArray())){
+ 		$result = array();
+ 	} else{
+ 		$result = $imagenusuario->toArray(); 
+ 	}
+ 	$imagen->usuario = $result;
+	
+
 		
 // $imagen = Image::where('imagenes.id', '=',$imagen->id $id);
 // ->leftjoin('usuarios', 'imagenes.IdUsuario', '=', 'usuarios.id')
@@ -605,15 +615,9 @@ $app->get('/imagenes/:id', function ($id) use ($app) {
 	
 		
 	
-	$db = $app->db->getConnection();
-	$imagen = $db->table('imagenes')->select('imagenes.*','usuarios.username','usuarios.imagen')
-	->leftjoin('usuarios', 'usuarios.id', '=', 'imagenes.IdUsuario')
-	->orderby('created_at','desc')
-
-	->get();
+	
 
 
-$imagen = Image::find($id);
 	
 	
 
