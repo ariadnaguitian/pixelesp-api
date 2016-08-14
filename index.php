@@ -596,7 +596,7 @@ $app->put('/imagenes/:id', function ($id) use ($app) {
 });
 $app->get('/imagenes/:id', function ($id) use ($app) {
 
-$imagen = Image::find($id);
+
 		
 // $imagen = Image::where('imagenes.id', '=',$imagen->id $id);
 // ->leftjoin('usuarios', 'imagenes.IdUsuario', '=', 'usuarios.id')
@@ -613,7 +613,7 @@ $imagen = Image::find($id);
 	->get();
 
 
-
+$imagen = Image::find($id);
 	
 	
 
