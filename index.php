@@ -598,8 +598,8 @@ $app->get('/imagenes/:id', function ($id) use ($app) {
 
 
 $imagen = Image::find($id);
-	$imagenusuario =  User::where('imagenes.id', '=', $imagen->$id)
-	->leftjoin('imagenes', 'imagenes.IdUsuario', '=', 'usuarios.id')
+	$imagenusuario =  Image::where('imagenes.id', '=', $imagen->$id)
+	->leftjoin('usuarios', 'imagenes.IdUsuario', '=', 'usuarios.id')
 	->select()->get();
  	if(empty($imagenusuario->toArray())){
  		$result = array();
