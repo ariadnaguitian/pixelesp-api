@@ -604,6 +604,14 @@ $app->get('/imagenes/:id', function ($id) use ($app) {
 // 						->get();
 		
 	
+	$db = $app->db->getConnection();
+	$imagen = $db->table('imagenes')->select('imagenes.*','usuarios.username','usuarios.imagen')
+	->leftjoin('usuarios', 'usuarios.id', '=', 'imagenes.IdUsuario')
+	->orderby('created_at','desc')
+
+	->get();
+
+
 
 	$imagen = Image::find($id);
 	
