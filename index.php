@@ -597,18 +597,14 @@ $app->put('/imagenes/:id', function ($id) use ($app) {
 $app->get('/imagenes/:id', function ($id) use ($app) {
 
 
-		
-	
 	
 
-		$db = $app->db->getConnection();
-		
-		$imagen	= $db->table('imagenes') 
-						->leftjoin('usuarios', 'imagenes.IdUsuario', '=', 'usuarios.id')
-						->select('imagenes.*', 'usuarios.name', 'usuarios.username')
-					
-						->get();
+						
+
 $imagen = Image::find($id);
+->leftjoin('usuarios', 'imagenes.IdUsuario', '=', 'usuarios.id')
+						->select('imagenes.*', 'usuarios.name', 'usuarios.username')						
+						->get();
 	$imgComments =  ImgComments::where('id_imagen', '=', $imagen->id)			
 	
 	->leftjoin('usuarios', 'usuarios.id', '=', 'imgcomments.idusuario')		
@@ -679,6 +675,7 @@ $app->get('/comments', function () use ($app) {
 	$comments = $db->table('comments')->select()->orderby('created_at','desc')->get();
 	$app->render(200,array('data' => $comments));
 });
+
 
 
 
