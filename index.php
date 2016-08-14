@@ -595,7 +595,18 @@ $app->put('/imagenes/:id', function ($id) use ($app) {
     $app->render(200,array('data' => $imagen->toArray()));
 });
 $app->get('/imagenes/:id', function ($id) use ($app) {
+
+	$db = $app->db->getConnection();
+		
 	$imagen = Image::find($id);
+
+		$db = $app->db->getConnection();
+		
+		$mensaje 	= $db->table('imagenes') 
+						->join('usuarios', 'imagenes.IdUsuario', '=', 'usuarios.id')
+						->select('imagenes.*', 'usuarios.name', 'usuarios.username')
+						->where('imagenes.id', '=', $id)
+						->get();
 
 	$imgComments =  ImgComments::where('id_imagen', '=', $imagen->id)			
 	
