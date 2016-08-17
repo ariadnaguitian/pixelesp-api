@@ -553,10 +553,17 @@ $app->post('/imagenes', function () use ($app) {
             'msg'   => 'Se requiere descripción',
         ));
 	}
-		
+		$Imagen = $input['Imagen'];
+	if(empty($Imagen)){
+		$app->render(500,array(
+			'error' => TRUE,
+            'msg'   => 'Se requiere descripción',
+        ));
+	}	
     $imagen = new Image();
     $imagen->Titulo = $Titulo;
     $imagen->Descripcion = $Descripcion;
+     $imagen->Imagen = $Imagen;
       $imagen->IdUsuario = $user->id;
  
      
