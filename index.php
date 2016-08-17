@@ -15,6 +15,7 @@ require 'Models/empleocomment.php';
 require 'Models/imgcomment.php';
 require 'Models/trabajo.php';
 require 'Models/Mensaje.php';
+use \Cloudinary\cloudinary_php\src\Cloudinary;
 
 
 
@@ -1746,6 +1747,34 @@ $app->delete('/borrarmensaje/:id', function ($id) use ($app) {
 		$app->render(200);
 		
 	});
+
+$app->post('/api/post/images', function () use ($app) {
+	try{
+		\Cloudinary::config(array( 
+		  "cloud_name" => "hyktxhgfc", 
+		  "api_key" => "584471834239559", 
+		  "api_secret" => "O6L8Tn5KXkef8Yee66LP4WNAz8I" 
+		));
+		$uploadedFiles = $_FILES['images'];
+		$fileCount = count($uploadedFiles['name']);
+		if ($fileCount > 0) {
+            foreach($uploadedFiles['name'] as $k => $v)
+			{
+                $fileInfo = explode('.', $v);
+	            $newFilename = md5(uniqid(rand(), true)) . "." . end($fileInfo);
+    			move_uploaded_file($uploadedFiles['tmp_name'][$k],$newFilename);
+                \Cloudinary\Uploader::upload($newFilename);
+                unlink($newFilename);
+            }            
+		}		
+	}catch(\Exception $e){
+		echo $e->getMessage();
+	}    
+	$data = array(
+    	'status' => 'success'
+    	);
+    echo json_encode($data);
+});
 
 $app->run();
 ?>
