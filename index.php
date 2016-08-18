@@ -1147,7 +1147,8 @@ $app->get('/imagenes/:id', function ($id) use ($app) {
         ));
 	}
 
-
+	$imagen->visitas++;
+		$imagen->save();
 	/*
 	$post->user = User::find($post->id_usuario);
 	*/
@@ -1157,8 +1158,7 @@ $app->get('/imagenes/:id', function ($id) use ($app) {
 	unset($imagen->id_usuario);
 
 	$app->render(200,array('data' => $imagen->toArray()));
-	$imagen->visitas++;
-		$imagen->save();
+
 
 });
 
