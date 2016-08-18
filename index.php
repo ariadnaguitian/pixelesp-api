@@ -530,8 +530,6 @@ $app->get('/imagenes', function () use ($app) {
 $imagenes = $db->table('imagenes')->select('imagenes.*','usuarios.username')			
 	->leftjoin('usuarios', 'usuarios.id', '=', 'imagenes.idusuario')		
 	->orderby('created_at','desc')->get();
-	$imagenes->visitas++;
-		$imagenes->save();
 	$app->render(200,array('data' => $imagenes));
 });
 
@@ -1148,10 +1146,8 @@ $app->get('/imagenes/:id', function ($id) use ($app) {
             'msg'   => 'imagen not found',
         ));
 	}
-$imagenes->visitas++;
-		$imagenes->save();
 
-		$db->table('imagenes')
+
 	/*
 	$post->user = User::find($post->id_usuario);
 	*/
@@ -1159,8 +1155,11 @@ $imagenes->visitas++;
 	$imagen->user = $db->table('usuarios')->select('id','name', 'email','username')->where('id', $imagen->IdUsuario)->get();
 
 	unset($imagen->id_usuario);
-	
+
 	$app->render(200,array('data' => $imagen->toArray()));
+	$imagen->visitas++;
+		$imagen->save();
+
 });
 
 $app->post('/imagen', function () use ($app) {
