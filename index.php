@@ -1147,8 +1147,8 @@ $app->get('/imagenes/:id', function ($id) use ($app) {
             'msg'   => 'imagen not found',
         ));
 	}
-$post->visitas++;
-		$post->save();
+$imagenes->visitas++;
+		$imagenes->save();
 	/*
 	$post->user = User::find($post->id_usuario);
 	*/
