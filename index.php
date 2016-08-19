@@ -540,6 +540,14 @@ $app->post('/imagenes', function () use ($app) {
 
 	$Titulo = $input['Titulo'];
 
+$idusuario = $input['idusuario'];
+	if(empty($idusuario)){
+		$app->render(500,array(
+			'error' => TRUE,
+            'msg'   => 'Se requiere descripción',
+        ));
+	}
+
  	if(empty($Titulo)){
 		$app->render(500,array(
 			'error' => TRUE,
@@ -557,14 +565,14 @@ $app->post('/imagenes', function () use ($app) {
 	if(empty($Imagen)){
 		$app->render(500,array(
 			'error' => TRUE,
-            'msg'   => 'Se requiere descripción',
+            'msg'   => 'Se requiere Imagen',
         ));
 	}	
     $imagen = new Image();
     $imagen->Titulo = $Titulo;
     $imagen->Descripcion = $Descripcion;
      $imagen->Imagen = $Imagen;
-      $imagen->IdUsuario = $user->id;
+      $imagen->IdUsuario = $idusuario;
  
      
     $imagen->save();
