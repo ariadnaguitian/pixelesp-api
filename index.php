@@ -17,8 +17,6 @@ require 'Models/trabajo.php';
 require 'Models/Mensaje.php';
 use \Cloudinary\cloudinary_php\src\Cloudinary;
 
-
-
 function simple_encrypt($text,$salt){  
    return trim(base64_encode(mcrypt_encrypt(MCRYPT_RIJNDAEL_256, $salt, $text, MCRYPT_MODE_ECB, mcrypt_create_iv(mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB), MCRYPT_RAND))));
 }
@@ -26,8 +24,6 @@ function simple_encrypt($text,$salt){
 function simple_decrypt($text,$salt){  
     return trim(mcrypt_decrypt(MCRYPT_RIJNDAEL_256, $salt, base64_decode($text), MCRYPT_MODE_ECB, mcrypt_create_iv(mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB), MCRYPT_RAND)));
 }
-
-
 
 $app = new \Slim\Slim();
 
@@ -45,8 +41,6 @@ $app->config('databases', [
     ]
     ]);
 
-
-
 $app->add(new Zeuxisoo\Laravel\Database\Eloquent\ModelMiddleware);
 $app->view(new \JsonApiView());
 $app->add(new \JsonApiMiddleware());
@@ -60,8 +54,9 @@ $app->get('/', function () use ($app) {
 	$app->render(200,array('msg' => 'pixelesp'));
 });
 
-
-
+/**
+ *	Login
+ */
 $app->post('/login', function () use ($app) {
 	$input = $app->request->getBody();
 
@@ -73,7 +68,6 @@ $app->post('/login', function () use ($app) {
         ));
 	}
 
-	
 	$password = $input['password'];
 	if(empty($password)){
 		$app->render(500,array(
@@ -81,7 +75,6 @@ $app->post('/login', function () use ($app) {
             'msg'   => 'Se requiere contraseña',
         ));
 	}
-
 
 	$db = $app->db->getConnection();
 	$user =$db->table('usuarios')->select()->where('username', $username)->first();
@@ -102,7 +95,9 @@ $app->post('/login', function () use ($app) {
 	$app->render(200,array('token' => $token));
 });
 
-
+/**
+ *	Login Admin
+ */
 $app->post('/loginadmin', function () use ($app) {
 	$input = $app->request->getBody();
 
@@ -113,7 +108,6 @@ $app->post('/loginadmin', function () use ($app) {
             'msg'   => 'Se requiere nombre de usuario',
         ));
 	}
-
 	
 	$password = $input['password'];
 	if(empty($password)){
@@ -123,11 +117,13 @@ $app->post('/loginadmin', function () use ($app) {
         ));
 	}
 
-	
-
-
 	$db = $app->db->getConnection();
-	$user =$db->table('usuarios')->select()->where('username', $username)->where('userlevel', '1')->first();
+	$user =$db->table('usuarios')
+	->select()
+	->where('username', $username)
+	->where('userlevel', '1')
+	->first();
+
     if(empty($user)){
         $app->render(500,array(
             'error' => TRUE,
@@ -135,14 +131,14 @@ $app->post('/loginadmin', function () use ($app) {
         ));
     }
 
-        if($user->password != $password){
+	if($user->password != $password){
         $app->render(500,array(
             'error' => TRUE,
             'msg'   => 'La contraseña no coincide',
         ));
     }
 
-      if($user->userlevel != 1){
+	if($user->userlevel != 1){
         $app->render(500,array(
             'error' => TRUE,
             'msg'   => 'Acceso denegado',
@@ -152,17 +148,16 @@ $app->post('/loginadmin', function () use ($app) {
 	$app->render(200,array('token' => $token));
 });
 
-
-
-
-
-
-
+/**
+ *	Logout
+ */
 $app->get('/logout', function() use($app) {
- 	$token="";
+	$token="";
 });
 
-
+/**
+ *	Get userdata
+ */
 $app->get('/me', function () use ($app) {	
 	$token = $app->request->headers->get('auth-token');
 	if(empty($token)){
@@ -172,7 +167,6 @@ $app->get('/me', function () use ($app) {
         ));
 	}
 	
-
 	$id_user_token = simple_decrypt($token, $app->enc_key);
 
 	$user = User::find($id_user_token);
@@ -185,21 +179,20 @@ $app->get('/me', function () use ($app) {
 	$app->render(200,array('data' => $user->toArray()));
 });
 
-
-
-
-
+/**
+ *	Get all users
+ */
 $app->get('/usuarios', function () use ($app) {
 	$db = $app->db->getConnection();
 	$usuarios = $db->table('usuarios')->select()->get();
 	$app->render(200,array('data' => $usuarios));
 });
 
-
-
+/**
+ *	Register new user
+ */
 $app->post('/usuarios', function () use ($app) {
 	$input = $app->request->getBody();
-
 
 	$username = $input['username'];
 
@@ -210,8 +203,6 @@ $app->post('/usuarios', function () use ($app) {
         ));
 	}
 
-	
-
 	$password = $input['password'];
 	if(empty($password)){
 		$app->render(500,array(
@@ -220,10 +211,7 @@ $app->post('/usuarios', function () use ($app) {
         ));
 	}
 
-
 	$email = $input['email'];
-
-
 	if(empty($email)){
 		$app->render(500,array(
 			'error' => TRUE,
@@ -231,24 +219,21 @@ $app->post('/usuarios', function () use ($app) {
         ));
 	}
   
-  $imagen = 'paintprogram.png';
-
-
+	$imagen = 'paintprogram.png';
 	
-    $user = new User();
-  
-    $user->password = $password;
-  
-     $user->username = $username;
-   $user->email = $email;
-       $user->imagen = $imagen;
-
+    $user = new User();  
+    $user->password = $password;  
+	$user->username = $username;
+	$user->email = $email;
+	$user->imagen = $imagen;
      
     $user->save();
     $app->render(200,array('data' => $user->toArray()));
 });
 
-
+/**
+ *	Update userdata
+ */
 $app->put('/usuarios/:id', function ($id) use ($app) {
 	$input = $app->request->getBody();
 	
@@ -268,7 +253,7 @@ $app->put('/usuarios/:id', function ($id) use ($app) {
         ));
 
 	}
-$email = $input['email'];
+	$email = $input['email'];
 	if(empty($email)){
 		$app->render(500,array(
 			'error' => TRUE,
@@ -283,22 +268,20 @@ $email = $input['email'];
         ));
 	}
 
-$country = $input['country'];
+	$country = $input['country'];
 	if(empty($country)){
 		$app->render(500,array(
 			'error' => TRUE,
             'msg'   => 'Se requiere país',
         ));
 	}
-$biografia = $input['biografia'];		
+	$biografia = $input['biografia'];		
 	if(empty($biografia)){		
 		$app->render(500,array(		
 			'error' => TRUE,		
             'msg'   => 'Se requiere descripción',		
         ));		
 	}		
-
-
 
 	$user = User::find($id);
 	if(empty($user)){
@@ -307,6 +290,7 @@ $biografia = $input['biografia'];
             'msg'   => 'Usuario no encontrado',
         ));
 	}
+
     $user->name = $name;
     $user->username = $username;
     $user->email = $email;
@@ -317,6 +301,10 @@ $biografia = $input['biografia'];
     $user->save();
     $app->render(200,array('data' => $user->toArray()));
 });
+
+/**
+ *	Get userdata
+ */
 $app->get('/usuarios/:id', function ($id) use ($app) {
 	$db = $app->db->getConnection();
 	$user = User::find($id);
@@ -327,11 +315,19 @@ $app->get('/usuarios/:id', function ($id) use ($app) {
         ));
 	}
 	unset($user->password);
-
  
- 	$user->imagenes = $db->table('imagenes')->select('Titulo')->where('IdUsuario', $user->id)->get();
+ 	$user->imagenes = $db->table('imagenes')
+	->select('Titulo')
+	->where('IdUsuario', $user
+	->id)
+	->get();
+
 	$app->render(200,array('data' => $user->toArray()));
 });
+
+/**
+ *	Delete user
+ */
 $app->delete('/usuarios/:id', function ($id) use ($app) {
 	$user = User::find($id);
 	if(empty($user)){
@@ -344,7 +340,9 @@ $app->delete('/usuarios/:id', function ($id) use ($app) {
 	$app->render(200);
 });
 
-
+/**
+ *	????
+ */
 $app->get('/post/:id', function ($id) use ($app) {
  	$db = $app->db->getConnection();
  	$post = Image::find($id);
@@ -359,23 +357,28 @@ $app->get('/post/:id', function ($id) use ($app) {
  	$post->user = User::find($post->id_usuario);
  	*/
  
- 	$post->user = $db->table('usuarios')->select('id','name', 'email','username')->where('id', $post->id_usuario)->get();
+ 	$post->user = $db->table('usuarios')
+	->select('id','name', 'email','username')
+	->where('id', $post
+	->id_usuario)
+	->get();
  
  	unset($post->id_usuario);
  	
  	$app->render(200,array('data' => $post->toArray()));
  });
  
-
+/**
+ *	Get noticias
+ */
 $app->get('/noticias', function () use ($app) {
 	$db = $app->db->getConnection();
-	$images = $db->table('noticias')->select('noticias.*','usuarios.username','usuarios.imagen')
+
+	$images = $db->table('noticias')
+	->select('noticias.*','usuarios.username','usuarios.imagen')
 	->leftjoin('usuarios', 'usuarios.id', '=', 'noticias.idusuario')
 	->orderby('created_at','desc')
-
 	->get();
-
-
 
 	foreach ($images as $key => $value) {
 		$newscomment =  NewsComments::where('id_noticia', '=', $value->id)
@@ -383,6 +386,7 @@ $app->get('/noticias', function () use ($app) {
 		->leftjoin('usuarios', 'usuarios.id', '=', 'newscomments.idusuario')
 		->orderby('created_at','desc')
 		->get();
+
 		if(empty($newscomment)){
 			$result = array();
 		} else{
@@ -392,34 +396,35 @@ $app->get('/noticias', function () use ($app) {
 	}
 	$app->render(200,array('data' => $images));
 });
+
+/**
+ *	????
+ */
 $app->get('/noticiasusuario/:id', function ($id) use ($app) {
 
 	$db = $app->db->getConnection();
-		$usuario = User::find($id);
+	$usuario = User::find($id);
+	$noticias =  Noticia::where('idusuario', '=', $usuario->id)
+	->leftjoin('usuarios', 'usuarios.id', '=', 'noticias.idusuario')
+	->get();
 
-
-
-$noticias =  Noticia::where('idusuario', '=', $usuario->id)
-->leftjoin('usuarios', 'usuarios.id', '=', 'noticias.idusuario')
-
-->get();
  	if(empty($noticias->toArray())){
  		$result = array();
  	} else{
  		$result = $noticias->toArray(); 
  	}
+
  	$usuario->noticias = $result;
-
-
-	
-
 	$app->render(200,array('data' => $noticias));
 });
 
+/**
+ *	Register Post nueva noticia
+ */
 $app->post('/noticias', function () use ($app) {
 	$input = $app->request->getBody();
 
-$idusuario = $input['idusuario'];
+	$idusuario = $input['idusuario'];
 	if(empty($idusuario)){
 		$app->render(500,array(
 			'error' => TRUE,
@@ -428,13 +433,13 @@ $idusuario = $input['idusuario'];
 	}
 
 	$Titulo = $input['Titulo'];
-
  	if(empty($Titulo)){
 		$app->render(500,array(
 			'error' => TRUE,
             'msg'   => 'Se requiere titulo',
         ));
 	}
+
 	$Descripcion = $input['Descripcion'];
 	if(empty($Descripcion)){
 		$app->render(500,array(
@@ -442,20 +447,19 @@ $idusuario = $input['idusuario'];
             'msg'   => 'Se requiere descripción',
         ));
 	}
-	
-		
+			
     $noticia = new Noticia();
     $noticia->IdUsuario = $idusuario;
     $noticia->Titulo = $Titulo;
     $noticia->Descripcion = $Descripcion;
-   
- 
      
     $noticia->save();
     $app->render(200,array('data' => $noticia->toArray()));
 });
 
-
+/**
+ *	Update noticia
+ */
 $app->put('/noticias/:id', function ($id) use ($app) {
 	$input = $app->request->getBody();
 	
@@ -466,6 +470,7 @@ $app->put('/noticias/:id', function ($id) use ($app) {
             'msg'   => 'Se requiere titulo',
         ));
 	}
+
 	$Descripcion = $input['Descripcion'];
 	if(empty($Descripcion)){
 		$app->render(500,array(
@@ -474,7 +479,6 @@ $app->put('/noticias/:id', function ($id) use ($app) {
         ));
 	}
 	
-
 	$noticia = Noticia::find($id);
 	if(empty($noticia)){
 		$app->render(404,array(
@@ -482,36 +486,45 @@ $app->put('/noticias/:id', function ($id) use ($app) {
             'msg'   => 'Noticia no encontrada',
         ));
 	}
+
     $noticia->Titulo = $Titulo;
     $noticia->Descripcion = $Descripcion;
  
     $noticia->save();
     $app->render(200,array('data' => $noticia->toArray()));
 });
+
+/**
+ *	Get noticia
+ */
 $app->get('/noticias/:id', function ($id) use ($app) {
 
+	$noticia = Noticia::find($id);	
+	/*$usuarios =  User::where('id', '=', $noticia->IdUsuario)->get();
 
-
-
-	$noticia = Noticia::find($id);
-
-	
-$usuarios =  User::where('id', '=', $noticia->IdUsuario)->get();
  	if(empty($usuarios->toArray())){
  		$result = array();
  	} else{
  		$result = $usuarios->toArray(); 
  	}
- 	$noticia->usuarios = $result;
+ 	$noticia->usuarios = $result;*/
 
+ 	//comments 	
+	foreach ($noticia as $key => $value) {
+		$newscomment =  NewsComments::where('id_noticia', '=', $value->id)
+		->select('newscomments.*','usuarios.username','usuarios.imagen')
+		->leftjoin('usuarios', 'usuarios.id', '=', 'newscomments.idusuario')
+		->orderby('created_at','desc')
+		->get();
 
-$newscomments =  NewsComments::where('id_noticia', '=', $noticia->id)->get();
- 	if(empty($newscomments->toArray())){
- 		$result = array();
- 	} else{
- 		$result = $newscomments->toArray(); 
- 	}
- 	$noticia->comentarios = $result;
+		if(empty($newscomment)){
+			$result = array();
+		} else{
+			$result = $newscomment->toArray(); 
+		}
+		$noticia[$key]->comentarios = $result;
+	}
+	//$app->render(200,array('data' => $noticia));
 
 	if(empty($noticia)){
 		$app->render(404,array(
@@ -521,11 +534,13 @@ $newscomments =  NewsComments::where('id_noticia', '=', $noticia->id)->get();
 	}
 
 	$app->render(200,array('data' => $noticia->toArray()));
-		$noticia->visitas++;
+	$noticia->visitas++;
     $noticia->save();
 });
 
-
+/**
+ *	Delete noticia
+ */
 $app->delete('/noticias/:id', function ($id) use ($app) {
 	$noticia = Noticia::find($id);
 	if(empty($noticia)){
@@ -538,36 +553,44 @@ $app->delete('/noticias/:id', function ($id) use ($app) {
 	$app->render(200);
 });
 
-
-$app->get('/imagenes', function () use ($app) {
+/**
+ *	Get imagenes
+ */
+$app->get('/imagenes', function () use ($app) {	
 	$db = $app->db->getConnection();
-$imagenes = $db->table('imagenes')->select('imagenes.*','usuarios.username')
-->where('Aprobada', '1')		
+
+	$imagenes = $db->table('imagenes')
+	->select('imagenes.*','usuarios.username')
+	->where('Aprobada', '1')		
 	->leftjoin('usuarios', 'usuarios.id', '=', 'imagenes.idusuario')		
-	->orderby('created_at','desc')->get();
+	->orderby('created_at','desc')
+	->get();
+
 	$app->render(200,array('data' => $imagenes));
 });
 
-
+/**
+ *	Post imagenes
+ */
 $app->post('/imagenes', function () use ($app) {
 	$input = $app->request->getBody();
 
 	$Titulo = $input['Titulo'];
+	if(empty($Titulo)){
+		$app->render(500,array(
+			'error' => TRUE,
+            'msg'   => 'Se requiere título',
+        ));
+	}
 
-$idusuario = $input['idusuario'];
+	$idusuario = $input['idusuario'];
 	if(empty($idusuario)){
 		$app->render(500,array(
 			'error' => TRUE,
             'msg'   => 'Se requiere descripción',
         ));
 	}
-
- 	if(empty($Titulo)){
-		$app->render(500,array(
-			'error' => TRUE,
-            'msg'   => 'Se requiere título',
-        ));
-	}
+ 	
 	$Descripcion = $input['Descripcion'];
 	if(empty($Descripcion)){
 		$app->render(500,array(
@@ -575,25 +598,28 @@ $idusuario = $input['idusuario'];
             'msg'   => 'Se requiere descripción',
         ));
 	}
-		$Imagen = $input['Imagen'];
+
+	$Imagen = $input['Imagen'];
 	if(empty($Imagen)){
 		$app->render(500,array(
 			'error' => TRUE,
             'msg'   => 'Se requiere Imagen',
         ));
-	}	
+	}
+
     $imagen = new Image();
     $imagen->Titulo = $Titulo;
     $imagen->Descripcion = $Descripcion;
-     $imagen->Imagen = $Imagen;
-      $imagen->IdUsuario = $idusuario;
- 
-     
+	$imagen->Imagen = $Imagen;
+	$imagen->IdUsuario = $idusuario;
+
     $imagen->save();
     $app->render(200,array('data' => $imagen->toArray()));
 });
 
-
+/**
+ *	Update imagenes
+ */
 $app->put('/imagenes/:id', function ($id) use ($app) {
 	$input = $app->request->getBody();
 	
@@ -604,6 +630,7 @@ $app->put('/imagenes/:id', function ($id) use ($app) {
             'msg'   => 'Se requiere título',
         ));
 	}
+
 	$Descripcion = $input['Descripcion'];
 	if(empty($Descripcion)){
 		$app->render(500,array(
@@ -619,39 +646,37 @@ $app->put('/imagenes/:id', function ($id) use ($app) {
             'msg'   => 'imagen no encontrada',
         ));
 	}
+
     $imagen->Titulo = $Titulo;
     $imagen->Descripcion = $Descripcion;
     $imagen->save();
+
     $app->render(200,array('data' => $imagen->toArray()));
 });
+
+/**
+ *	Get imagen ????
+ */
 $app->get('/imagenes/:id', function ($id) use ($app) {
 
-
-$imagen = Image::find($id);
-	// $imagenusuario =  User::where('id', '=', 'imagenes.IdUsuario')
+	$imagen = Image::find($id);
 	
-	// ->select()->get();
- // 	if(empty($imagenusuario->toArray())){
- // 		$result = array();
- // 	} else{
- // 		$result = $imagenusuario->toArray(); 
- // 	}
- // 	$imagen->usuario = $result;
+	//usuario
+	/*$imagenusuario =  User::where('id', '=', 'imagenes.IdUsuario')->select()->get();
+	if(empty($imagenusuario->toArray())){
+		$result = array();
+	} else{
+		$result = $imagenusuario->toArray(); 
+	}
+	$imagen->usuario = $result;*/
 	
-
-
-	
-	
-
-
-	
-	
-
-	$imgComments =  ImgComments::where('id_imagen', '=', $imagen->id)			
-	
+	//comentarios
+	$imgComments =  ImgComments::where('id_imagen', '=', $imagen->id)	
 	->leftjoin('usuarios', 'usuarios.id', '=', 'imgcomments.idusuario')		
 	->select('imgcomments.*','usuarios.username', 'usuarios.imagen')	
-	->orderby('created_at','desc')->get();
+	->orderby('created_at','desc')
+	->get();
+
  	if(empty($imgComments->toArray())){
  		$result = array();
  	} else{
@@ -659,66 +684,82 @@ $imagen = Image::find($id);
  	}
  	$imagen->comentarios = $result;
 
+ 	//favoritos
+    $imgfavoritos =  Favorito::where('idimagen', '=', $imagen->id)
+	->select('imgfavoritos.*','usuarios.username','usuarios.imagen')
+	->leftjoin('usuarios', 'usuarios.id', '=', 'imgfavoritos.idusuario')
+	->orderby('created_at','desc')
+	->get();
 
-
-	    $imgfavoritos =  Favorito::where('idimagen', '=', $imagen->id)
-		->select('imgfavoritos.*','usuarios.username','usuarios.imagen')
-		->leftjoin('usuarios', 'usuarios.id', '=', 'imgfavoritos.idusuario')
-		->orderby('created_at','desc')
-		->get();
-		if(empty($imgfavoritos)){
-						$result = array();
-		} else{
-			$result = $imgfavoritos->toArray(); 
-		}
-		$imagen->favoritos = $result;
+	if(empty($imgfavoritos)){
+					$result = array();
+	} else{
+		$result = $imgfavoritos->toArray(); 
+	}
+	$imagen->favoritos = $result;
 	
-
+	//error
 	if(empty($imagen)){
 		$app->render(404,array(
 			'error' => TRUE,
             'msg'   => 'imagen no encontrada',
         ));
 	}
+
 	$app->render(200,array('data' => $imagen->toArray()));
 });
-$app->delete('/imagenes/:id', function ($id) use ($app) {
-	$imagen = Image::find($id);
 
+/**
+ *	Delete imagenes
+ */
+$app->delete('/imagenes/:id', function ($id) use ($app) {
+
+	$imagen = Image::find($id);
 	$imgComments =  ImgComments::where('id_imagen', '=', $imagen->id)->get();
+
 	if(empty($imgComments->toArray())){
 		$result = array();
 	} else{
 		$result = $imgComments->toArray(); 
-	}
+	}	
 	$imagen->comentarios = $result;
+
 	if(empty($imagen)){
 		$app->render(404,array(
 			'error' => TRUE,
             'msg'   => 'imagen no encontrada',
         ));
 	}
+
 	$imagen->delete();
 	$app->render(200);
 });
 
-
-//comentarios:
-
+/**
+ *	Comentarios
+ */
 $app->get('/comments-by-post/:id', function ($id) use ($app) {	
 	$db = $app->db->getConnection();
-	$comments = $db->table('comments')->select()->where('id_imagen', $id)->orderby('created_at','desc')->get();
+
+	$comments = $db->table('comments')
+	->select()
+	->where('id_imagen', $id)
+	->orderby('created_at','desc')
+	->get();
+
 	$app->render(200,array('data' => $comments));	
 });
 
-
 $app->get('/comments', function () use ($app) {
 	$db = $app->db->getConnection();
-	$comments = $db->table('comments')->select()->orderby('created_at','desc')->get();
+
+	$comments = $db->table('comments')
+	->select()
+	->orderby('created_at','desc')
+	->get();
+
 	$app->render(200,array('data' => $comments));
 });
-
-
 
 $app->put('/comments/:id', function ($id) use ($app) {
 	$input = $app->request->getBody();
@@ -738,37 +779,51 @@ $app->put('/comments/:id', function ($id) use ($app) {
             'msg'   => 'comentario no encontrado',
         ));
 	}
+
     $comment->text = $text;
     $comment->save();
+
     $app->render(200,array('data' => $comment->toArray()));
 });
+
 $app->get('/comments/:id', function ($id) use ($app) {
 	$comment = Comment::find($id);
+
 	if(empty($comment)){
 		$app->render(404,array(
 			'error' => TRUE,
             'msg'   => 'comentario no encontrado',
         ));
 	}
+
 	$app->render(200,array('data' => $comment->toArray()));
 });
+
 $app->delete('/comments/:id', function ($id) use ($app) {
 	$comment = Comment::find($id);
+
 	if(empty($comment)){
 		$app->render(404,array(
 			'error' => TRUE,
             'msg'   => 'comentario no encontrado',
         ));
 	}
+
 	$comment->delete();
 	$app->render(200);
 });
 
-//comentarios de noticias:
-
+/**
+ *	Comentarios de noticias
+ */
 $app->get('/newscomments', function () use ($app) {
 	$db = $app->db->getConnection();
-	$newscomments = $db->table('newscomments')->select()->orderby('created_at','desc')->get();
+
+	$newscomments = $db->table('newscomments')
+	->select()
+	->orderby('created_at','desc')
+	->get();
+
 	$app->render(200,array('data' => $newscomments));
 });
 
@@ -776,23 +831,22 @@ $app->post('/newscomments', function () use ($app) {
 	$input = $app->request->getBody();
 
 	$text = $input['text'];
-	$idusuario = $input['idusuario'];
-	$id_noticia = $input['id_noticia'];
-	
 	if(empty($text)){
 		$app->render(500,array(
 			'error' => TRUE,
             'msg'   => 'text is required',
         ));
-	}	
-	
+	}
+
+	$idusuario = $input['idusuario'];	
 	if(empty($idusuario)){
 		$app->render(500,array(
 			'error' => TRUE,
             'msg'   => 'idusuario is required',
         ));
 	}
-	
+
+	$id_noticia = $input['id_noticia'];
 	if(empty($id_noticia)){
 		$app->render(500,array(
 			'error' => TRUE,
@@ -800,14 +854,11 @@ $app->post('/newscomments', function () use ($app) {
         ));
 	}
 
-
-		
     $newscomment = new NewsComments();
     $newscomment->idusuario  = $idusuario;
     $newscomment->id_noticia = $id_noticia;
-    $newscomment->text 		 = $text;
- 
-     
+    $newscomment->text 		 = $text; 
+
     $newscomment->save();
     $app->render(200,array('data' => $newscomment->toArray()));
 });
@@ -830,34 +881,44 @@ $app->put('/newscomments/:id', function ($id) use ($app) {
             'msg'   => 'newscomment not found',
         ));
 	}
+
     $newscomment->text = $text;
     $newscomment->save();
+
     $app->render(200,array('data' => $newscomment->toArray()));
 });
+
 $app->get('/newscomments/:id', function ($id) use ($app) {
 	$newscomment = NewsComments::find($id);
+
 	if(empty($newscomment)){
 		$app->render(404,array(
 			'error' => TRUE,
             'msg'   => 'newscomment not found',
         ));
 	}
+
 	$app->render(200,array('data' => $newscomment->toArray()));
 });
+
 $app->delete('/newscomments/:id', function ($id) use ($app) {
 	$newscomment = NewsComments::find($id);
+
 	if(empty($newscomment)){
 		$app->render(404,array(
 			'error' => TRUE,
             'msg'   => 'comment not found',
         ));
 	}
+
 	$comment->delete();
 	$app->render(200);
 });
 
 
-	//comentarios imagenes:		
+/**
+ *	Comentarios de imagenes
+ */
 $app->get('/imgcomments', function () use ($app) {		
 	$db = $app->db->getConnection();		
 	$imgcomments = $db->table('imgcomments')->select()->orderby('created_at','desc')->get();		
