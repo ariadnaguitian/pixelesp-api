@@ -373,7 +373,7 @@ $app->get('/post/:id', function ($id) use ($app) {
  */
 $app->get('/noticias', function () use ($app) {
 	$db = $app->db->getConnection();
-
+	
 	$images = $db->table('noticias')
 	->select('noticias.*','usuarios.username','usuarios.imagen')
 	->leftjoin('usuarios', 'usuarios.id', '=', 'noticias.idusuario')
@@ -510,21 +510,13 @@ $app->get('/noticias/:id', function ($id) use ($app) {
  	$noticia->usuarios = $result;*/
 
  	//comments 	
-	foreach ($noticia as $key => $value) {
-		$newscomment =  NewsComments::where('id_noticia', '=', $value->id)
-		->select('newscomments.*','usuarios.username','usuarios.imagen')
-		->leftjoin('usuarios', 'usuarios.id', '=', 'newscomments.idusuario')
-		->orderby('created_at','desc')
-		->get();
-
-		if(empty($newscomment)){
-			$result = array();
-		} else{
-			$result = $newscomment->toArray(); 
-		}
-		$noticia[$key]->comentarios = $result;
-	}
-	
+	$newscomments = NewsComments::where('id_noticia', '=', $noticia->id)->get();
+ 	if(empty($newscomments->toArray())){
+ 		$result = array();
+ 	} else{
+ 		$result = $newscomments->toArray(); 
+ 	} 	
+ 	$noticia->comentarios = $result;
 
 	if(empty($noticia)){
 		$app->render(404,array(
@@ -533,8 +525,7 @@ $app->get('/noticias/:id', function ($id) use ($app) {
         ));
 	}
 
-	$app->render(200,array('data' => $noticia));
-	//$app->render(200,array('data' => $noticia->toArray()));
+	$app->render(200,array('data' => $noticia->toArray()));
 	$noticia->visitas++;
     $noticia->save();
 });
