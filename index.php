@@ -373,7 +373,7 @@ $app->get('/post/:id', function ($id) use ($app) {
  */
 $app->get('/noticias', function () use ($app) {
 	$db = $app->db->getConnection();
-	
+
 	$images = $db->table('noticias')
 	->select('noticias.*','usuarios.username','usuarios.imagen')
 	->leftjoin('usuarios', 'usuarios.id', '=', 'noticias.idusuario')
@@ -499,33 +499,31 @@ $app->put('/noticias/:id', function ($id) use ($app) {
  */
 $app->get('/noticias/:id', function ($id) use ($app) {
 
-	$noticia = Noticia::find($id);	
-	/*$usuarios =  User::where('id', '=', $noticia->IdUsuario)->get();
+	$db = $app->db->getConnection();
+	
+	$noticia = $db->table('noticias')
+	->select('noticias.*','usuarios.username','usuarios.imagen')
+	->where('noticias.id', '=', $id)
+	->leftjoin('usuarios', 'usuarios.id', '=', 'noticias.idusuario')
+	->orderby('created_at','desc')
+	->get();
 
- 	if(empty($usuarios->toArray())){
- 		$result = array();
- 	} else{
- 		$result = $usuarios->toArray(); 
- 	}
- 	$noticia->usuarios = $result;*/
+	foreach ($noticia as $key => $value) {
+		$newscomment =  NewsComments::where('id_noticia', '=', $value->id)
+		->select('newscomments.*','usuarios.username','usuarios.imagen')
+		->leftjoin('usuarios', 'usuarios.id', '=', 'newscomments.idusuario')
+		->orderby('created_at','desc')
+		->get();
 
- 	//comments 	
-	$newscomments = NewsComments::where('id_noticia', '=', $noticia->id)->get();
- 	if(empty($newscomments->toArray())){
- 		$result = array();
- 	} else{
- 		$result = $newscomments->toArray(); 
- 	} 	
- 	$noticia->comentarios = $result;
-
-	if(empty($noticia)){
-		$app->render(404,array(
-			'error' => TRUE,
-            'msg'   => 'Noticia no encontrada',
-        ));
+		if(empty($newscomment)){
+			$result = array();
+		} else{
+			$result = $newscomment->toArray(); 
+		}
+		$noticia[$key]->comentarios = $result;
 	}
+	$app->render(200,array('data' => $noticia));
 
-	$app->render(200,array('data' => $noticia->toArray()));
 	$noticia->visitas++;
     $noticia->save();
 });
