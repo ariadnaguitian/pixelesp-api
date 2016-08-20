@@ -499,7 +499,7 @@ $app->put('/noticias/:id', function ($id) use ($app) {
  */
 $app->get('/noticias/:id', function ($id) use ($app) {
 
-	$db = $app->db->getConnection();
+	/*$db = $app->db->getConnection();
 	
 	$noticia = $db->table('noticias')
 	->select('noticias.*','usuarios.username','usuarios.imagen')
@@ -522,8 +522,36 @@ $app->get('/noticias/:id', function ($id) use ($app) {
 		}
 		$noticia[$key]->comentarios = $result;
 	}
-	$app->render(200,array('data' => $noticia));
+	$app->render(200,array('data' => $noticia));*/
 
+	$noticia = Noticia::find($id);
+
+	$comments =  NewsComments::where('idusuario', '=', $noticia->IdUsuario)->get();
+
+ 	if(empty($comments->toArray())){
+ 		$result = array();
+ 	} else{
+ 		$result = $comments->toArray(); 
+ 	}
+ 	$noticia->comments = $result;
+
+ 	//comments 	
+	/*$newscomments = NewsComments::where('id_noticia', '=', $noticia->id)->get();
+ 	if(empty($newscomments->toArray())){
+ 		$result = array();
+ 	} else{
+ 		$result = $newscomments->toArray(); 
+ 	} 	
+ 	$noticia->comentarios = $result;*/
+
+	if(empty($noticia)){
+		$app->render(404,array(
+			'error' => TRUE,
+            'msg'   => 'Noticia no encontrada',
+        ));
+	}
+
+	$app->render(200,array('data' => $noticia->toArray()));
 	$noticia->visitas++;
     $noticia->save();
 });
