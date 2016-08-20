@@ -492,7 +492,7 @@ $app->get('/noticias/:id', function ($id) use ($app) {
 
 	$db = $app->db->getConnection();
 	$noticia = $db->table('noticias')->select('noticias.*','usuarios.username','usuarios.imagen')
-	->leftjoin('usuarios', 'usuarios.id', '=', 'noticias.idusuario')
+	->leftjoin('usuarios', 'usuarios.id', '=', 'noticias.IdUsuario')
 	->orderby('created_at','desc')
 
 	->get();
