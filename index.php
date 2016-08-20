@@ -524,7 +524,7 @@ $app->get('/noticias/:id', function ($id) use ($app) {
 		}
 		$noticia[$key]->comentarios = $result;
 	}
-	//$app->render(200,array('data' => $noticia));
+	
 
 	if(empty($noticia)){
 		$app->render(404,array(
@@ -533,7 +533,8 @@ $app->get('/noticias/:id', function ($id) use ($app) {
         ));
 	}
 
-	$app->render(200,array('data' => $noticia->toArray()));
+	$app->render(200,array('data' => $noticia));
+	//$app->render(200,array('data' => $noticia->toArray()));
 	$noticia->visitas++;
     $noticia->save();
 });
