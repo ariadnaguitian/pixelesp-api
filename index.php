@@ -492,14 +492,10 @@ $app->get('/noticias/:id', function ($id) use ($app) {
 
 
 
-	$noticia = Noticia::find($id);
+	$noticia = Noticia::find($id)->select('noticias.*','usuarios.username','usuarios.imagen')
+	->leftjoin('usuarios', 'usuarios.id', '=', 'noticias.idusuario');
 
-		$db = $app->db->getConnection();
-	$noticia = $db->table('noticias')->select('noticias.*','usuarios.username','usuarios.imagen')
-	->leftjoin('usuarios', 'usuarios.id', '=', 'noticias.idusuario')
-	->orderby('created_at','desc')
-
-	->get();
+	
 
 
 $newscomments =  NewsComments::where('id_noticia', '=', $noticia->id)->get();
