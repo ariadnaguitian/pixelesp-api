@@ -490,16 +490,19 @@ $app->put('/noticias/:id', function ($id) use ($app) {
 });
 $app->get('/noticias/:id', function ($id) use ($app) {
 
-	$db = $app->db->getConnection();
-	$noticia = $db->table('noticias')->select('noticias.*','usuarios.username','usuarios.imagen')
-	->leftjoin('usuarios', 'usuarios.id', '=', 'noticias.IdUsuario')
-	->orderby('created_at','desc')
 
-	->get();
+
 
 	$noticia = Noticia::find($id);
 
 	
+$usuarios =  User::where('id', '=', $noticia->IdUsuario)->get();
+ 	if(empty($usuarios->toArray())){
+ 		$result = array();
+ 	} else{
+ 		$result = $usuarios->toArray(); 
+ 	}
+ 	$noticia->usuarios = $result;
 
 
 $newscomments =  NewsComments::where('id_noticia', '=', $noticia->id)->get();
