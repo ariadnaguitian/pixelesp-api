@@ -490,7 +490,12 @@ $app->put('/noticias/:id', function ($id) use ($app) {
 });
 $app->get('/noticias/:id', function ($id) use ($app) {
 
+	$db = $app->db->getConnection();
+	$noticia = $db->table('noticias')->select('noticias.*','usuarios.username','usuarios.imagen')
+	->leftjoin('usuarios', 'usuarios.id', '=', 'noticias.idusuario')
+	->orderby('created_at','desc')
 
+	->get();
 
 	$noticia = Noticia::find($id);
 
