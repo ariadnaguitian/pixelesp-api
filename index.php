@@ -462,9 +462,9 @@ $app->post('/noticias', function () use ($app) {
  */
 $app->get('/noticias/:id', function ($id) use ($app) {
 
-	$noticia = Noticia::find($id);
+	//$noticia = Noticia::find($id);
 
-	$noticia = noticia::where('id_noticia', '=', $noticia->id)
+	$noticia = Noticia::where('id', '=', $id)
 	->select('noticia.*','usuarios.username','usuarios.imagen')
 	->leftjoin('usuarios', 'usuarios.id', '=', 'noticia.idusuario')
 	->orderby('created_at','desc')
