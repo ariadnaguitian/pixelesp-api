@@ -283,6 +283,9 @@ $app->put('/usuarios/:id', function ($id) use ($app) {
         ));		
 	}		
 
+		$imagen = $input['imagen'];		
+
+
 	$user = User::find($id);
 	if(empty($user)){
 		$app->render(404,array(
@@ -297,6 +300,9 @@ $app->put('/usuarios/:id', function ($id) use ($app) {
     $user->city = $city;
     $user->country = $country;
     $user->biografia = $biografia;
+ 	$user->imagen = $imagen;
+
+
 
     $user->save();
     $app->render(200,array('data' => $user->toArray()));
