@@ -468,7 +468,8 @@ $app->get('/noticias/:id', function ($id) use ($app) {
 	->select('noticia.*','usuarios.username','usuarios.imagen')
 	->leftjoin('usuarios', 'usuarios.id', '=', 'noticia.idusuario')
 	->orderby('created_at','desc')
-	->get();
+	->first();
+
  	if(empty($noticia->toArray())){
  		$result = array();
  	} else{
@@ -495,7 +496,7 @@ $app->get('/noticias/:id', function ($id) use ($app) {
         ));
 	}
 
-	$app->render(200,array('data' => $noticia->toArray()));
+	$app->render(200,array('data' => $noticia));
 	$noticia->visitas++;
     $noticia->save();
 });
