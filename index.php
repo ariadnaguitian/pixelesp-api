@@ -668,7 +668,7 @@ $app->put('/imagenes/:id', function ($id) use ($app) {
  */
 $app->get('/imagenes/:id', function ($id) use ($app) {
 
-	$imagen = Image::find($id);
+	//$imagen = Image::find($id);
 	
 	//usuario
 	/*$imagenusuario =  User::where('id', '=', 'imagenes.IdUsuario')->select()->get();
@@ -680,6 +680,20 @@ $app->get('/imagenes/:id', function ($id) use ($app) {
 	$imagen->usuario = $result;*/
 	
 	//comentarios
+
+
+	$imagen = Image::where('imagenes.id', '=', $id)
+	->select('imagenes.*','usuarios.username','usuarios.imagen')
+	->leftjoin('usuarios', 'usuarios.id', '=', 'imagenes.IdUsuario')
+	->orderby('created_at','desc')
+	->first();
+
+ 	if(empty($imagen->toArray())){
+ 		$result = array();
+ 	} else{
+ 		$result = $imagen->toArray(); 
+ 	}
+
 	$imgComments =  ImgComments::where('id_imagen', '=', $imagen->id)	
 	->leftjoin('usuarios', 'usuarios.id', '=', 'imgcomments.idusuario')		
 	->select('imgcomments.*','usuarios.username', 'usuarios.imagen')	
