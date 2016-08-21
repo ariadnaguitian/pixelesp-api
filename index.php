@@ -219,7 +219,7 @@ $app->post('/usuarios', function () use ($app) {
         ));
 	}
   
-	$imagen = 'paintprogram.png';
+	$imagen = 'v1471755664/Avatar/paintprogram.png';
 	
     $user = new User();  
     $user->password = $password;  
