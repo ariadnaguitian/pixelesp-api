@@ -607,10 +607,19 @@ $app->post('/imagenes', function () use ($app) {
         ));
 	}
 
+	$Previa = $input['Previa'];
+	if(empty($Previa)){
+		$app->render(500,array(
+			'error' => TRUE,
+            'msg'   => 'Se requiere Previa',
+        ));
+	}
+
     $imagen = new Image();
     $imagen->Titulo = $Titulo;
     $imagen->Descripcion = $Descripcion;
 	$imagen->Imagen = $Imagen;
+	$imagen->Previa = $Previa;
 	$imagen->IdUsuario = $idusuario;
 
     $imagen->save();
