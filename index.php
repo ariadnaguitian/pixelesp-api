@@ -156,7 +156,7 @@ $app->get('/logout', function() use($app) {
 });
 
 /**
- *	Get userdata
+ *	Get current userdata
  */
 $app->get('/me', function () use ($app) {	
 	$token = $app->request->headers->get('auth-token');
@@ -458,6 +458,49 @@ $app->post('/noticias', function () use ($app) {
 });
 
 /**
+ *	Get noticia
+ */
+$app->get('/noticias/:id', function ($id) use ($app) {
+
+	$noticia = Noticia::find($id);
+
+	$noticia = noticia::where('id_noticia', '=', $noticia->id)
+	->select('noticia.*','usuarios.username','usuarios.imagen')
+	->leftjoin('usuarios', 'usuarios.id', '=', 'noticia.idusuario')
+	->orderby('created_at','desc')
+	->get();
+ 	if(empty($noticia->toArray())){
+ 		$result = array();
+ 	} else{
+ 		$result = $noticia->toArray(); 
+ 	}
+
+ 	//comments 	
+	$newscomments = NewsComments::where('id_noticia', '=', $noticia->id)
+	->select('newscomments.*','usuarios.username','usuarios.imagen')
+	->leftjoin('usuarios', 'usuarios.id', '=', 'newscomments.idusuario')
+	->orderby('created_at','desc')
+	->get();
+ 	if(empty($newscomments->toArray())){
+ 		$result = array();
+ 	} else{
+ 		$result = $newscomments->toArray(); 
+ 	} 	
+ 	$noticia->comentarios = $result;
+
+	if(empty($noticia)){
+		$app->render(404,array(
+			'error' => TRUE,
+            'msg'   => 'Noticia no encontrada',
+        ));
+	}
+
+	$app->render(200,array('data' => $noticia->toArray()));
+	$noticia->visitas++;
+    $noticia->save();
+});
+
+/**
  *	Update noticia
  */
 $app->put('/noticias/:id', function ($id) use ($app) {
@@ -492,38 +535,6 @@ $app->put('/noticias/:id', function ($id) use ($app) {
  
     $noticia->save();
     $app->render(200,array('data' => $noticia->toArray()));
-});
-
-/**
- *	Get noticia
- */
-$app->get('/noticias/:id', function ($id) use ($app) {
-
-	$noticia = Noticia::find($id);
-
- 	//comments 	
-	$newscomments = NewsComments::where('id_noticia', '=', $noticia->id)
-	->select('newscomments.*','usuarios.username','usuarios.imagen')
-	->leftjoin('usuarios', 'usuarios.id', '=', 'newscomments.idusuario')
-	->orderby('created_at','desc')
-	->get();
- 	if(empty($newscomments->toArray())){
- 		$result = array();
- 	} else{
- 		$result = $newscomments->toArray(); 
- 	} 	
- 	$noticia->comentarios = $result;
-
-	if(empty($noticia)){
-		$app->render(404,array(
-			'error' => TRUE,
-            'msg'   => 'Noticia no encontrada',
-        ));
-	}
-
-	$app->render(200,array('data' => $noticia->toArray()));
-	$noticia->visitas++;
-    $noticia->save();
 });
 
 /**
